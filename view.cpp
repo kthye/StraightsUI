@@ -3,16 +3,15 @@
 #include "controller.h"
 #include "model.h"
 #include "subject.h"
-#include "DeckGUI.h"
 #include <iostream>
 
-View::View(Controller *c, Model *m) : model_(m), controller_(c), panels(false,10), menuBar(true, 10), newGameButton( "New Game" ),
-endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10), card(deck.null()) {
+View::View(Controller *c, Model *m) : model_(m), panels(false,10), menuBar(true, 10), newGameButton( "New Game" ),
+endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10) {
 
 	// Sets some properties of the window.
     set_title("Straights");
 	set_border_width(10);
-	
+
 	// Add panels to the window
 	add(panels);
 
@@ -21,15 +20,11 @@ endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10), card
 	panels.add(table);
 	panels.add(scoreboard);
 	panels.add(hand);
-	card.set(deck.null());
+	// card.set( deck.null() );
 
 	// Add buttons to the box (a container). Buttons initially invisible
 	menuBar.add(newGameButton);
 	menuBar.add(endGameButton);
-
-	// Associate button "clicked" events with local onButtonClicked() method defined below.
-	newGameButton.signal_clicked().connect( sigc::mem_fun( *this, &View::nextButtonClicked ) );
-	endGameButton.signal_clicked().connect( sigc::mem_fun( *this, &View::resetButtonClicked ) );
 
 	// Define table spacing
 	table.set_row_spacing(10);
@@ -37,9 +32,9 @@ endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10), card
 
 	// Add cards to table
 	for (int y = 0; y < 4; y++) {
-		vector<Gtk::Image*> rows;
+		std::vector<Gtk::Image*> rows;
 		for (int x = 0; x < 13; x++) {
-			Gtk::Image* temp = new Gtk::Image(deck.null());
+			Gtk::Image* temp = new Gtk::Image();
 			rows.push_back(temp);
 			table.attach(*temp, x, y, temp->get_width(), temp->get_height());
 		}
@@ -54,7 +49,7 @@ endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10), card
 
 	// Add empty cards to hand
 	for (int i = 0; i < 13; i++) {
-		handCards.push_back(new Gtk::Image(deck.null()));
+		handCards.push_back(new Gtk::Image());
 		hand.add(*handCards.at(i));
 	}
 
@@ -70,19 +65,11 @@ View::~View() {}
 
 
 void View::update() {
-  Suits suit = model_->suit();
-  Faces face = model_->face();
-  if ( suit == NOSUIT ) 
-    card.set( deck.null() );
-  else
-    card.set( deck.image(face, suit) );
+  // Suit suit = model_->suit();
+  // Faces face = model_->face();
+  // if ( suit == NOSUIT )
+  //   card.set( deck.null() );
+  // else
+  //   card.set( deck.image(face, suit) );
 
 }
-
-void View::nextButtonClicked() {
-  controller_->nextButtonClicked();
-} // View::nextButtonClicked
-
-void View::resetButtonClicked() {
-  controller_->resetButtonClicked();
-} // View::resetButtonClicked

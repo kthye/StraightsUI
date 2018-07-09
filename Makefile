@@ -1,18 +1,17 @@
 CXX= g++
-CXXFLAGS = -Wall -O -g `pkg-config gtkmm-3.0 --cflags`
+CXXFLAGS = -std=c++14 -Wall -MMD -g `pkg-config gtkmm-3.0 --cflags`
 LDFLAGS=`pkg-config gtkmm-3.0 --libs`
-OBJS = subject.o model.o controller.o DeckGUI.o view.o main.o
-EXEC = mvc
+SOURCES = $(wildcard *.cpp) # list of all .cpp files in the current directory
+OBJECTS = $(SOURCES:.cpp=.o)  # .o files depend upon .cpp files with same names
+DEPENDS = $(OBJECTS:.o=.d)   # .d file is list of dependencies for corresponding .cpp file
+EXEC = straights
 
-$(EXEC): $(OBJS)
-	$(CXX) $(OBJS) $(CXXFLAGS) $(LDFLAGS) -o $(EXEC)
+$(EXEC): $(OBJECTS)
+	$(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) -o $(EXEC)
+
+-include $(DEPENDS)
+
+.PHONY: clean
 
 clean:
-	rm $(EXEC) $(OBJS)
-
-DeckGUI.o: DeckGUI.h DeckGUI.cc
-model.o: subject.h model.h model.cc
-subject.o: subject.h subject.cc
-controller.o: controller.h model.h controller.cc
-view.o: view.h observer.h controller.h model.h subject.h DeckGUI.h view.cc
-main.o: view.h controller.h model.h main.cc
+	rm $(EXEC) $(OBJS) $(DEPENDS)

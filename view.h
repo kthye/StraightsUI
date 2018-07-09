@@ -16,7 +16,6 @@
 #include <gtkmm.h>
 #include <gtkmm/grid.h>
 #include <vector>
-#include "DeckGUI.h"
 #include "observer.h"
 
 class Controller;
@@ -32,31 +31,21 @@ public:
 private:
 	// Observer Pattern: to access Model accessors without having to downcast subject
 	Model *model_;
-	
-	// Strategy Pattern member (plus signal handlers)
-	Controller *controller_;
-
-	// Card Images
-	DeckGUI deck;
 
 	// Member widgets:
-	Gtk::VBox panels;    
+	Gtk::VBox panels;
 
-	Gtk::HBox menuBar;   
+	Gtk::HBox menuBar;
 		Gtk::Button newGameButton;
 		Gtk::Button endGameButton;
 	Gtk::Grid table;
-		vector<vector<Gtk::Image*>> tableSlots;
+		std::vector<std::vector<Gtk::Image*>> tableSlots;
 	Gtk::HBox scoreboard;
 		std::vector<Gtk::Button*> rageButtons;
 	Gtk::HBox hand;
-		vector<Gtk::Image*>	handCards;
+		std::vector<Gtk::Image*>	handCards;
 	Gtk::Image card;
 
-	// Signal handlers:
-	void nextButtonClicked();
-	void resetButtonClicked();
-
-}; 
+};
 
 #endif

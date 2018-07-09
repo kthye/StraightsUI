@@ -1,36 +1,39 @@
 /*
- * MVC example of GTKmm program
- *
- * Model class.  Is responsible keeping track of the deck of cards.  
- * It knows nothing about views or controllers.
- *
- *  Created by Jo Atlee on 06/07/09.
- *  Copyright 2009 UW. All rights reserved.
- *
+ * Adapted from MVC example by Jo Atlee
  */
 
 
-#ifndef MVC_MODEL_H
-#define MVC_MODEL_H
+#ifndef STRAIGHTS_MODEL_H
+#define STRAIGHTS_MODEL_H
 
+#include <vector>
+#include <memory>
 #include "subject.h"
+#include "SortedCardList.h"
+#include "Player.h"
 
-const int numFaces = 6;
-const int numSuits = 4;
-const int numCards = numFaces * numSuits;
-
-enum Faces { NINE, TEN, JACK, QUEEN, KING, ACE, NOFACE };
-enum Suits { DIAMOND, CLUB, HEART, SPADE, NOSUIT };
+class Card;
+class Player;
 
 class Model : public Subject {
+    // The deck owns all card objects passed around during the game
+    std::vector<std::unique_ptr<const Card>> deck_;
+
+    // Holds all players in the game
+    std::vector<std::unique_ptr<Player>> players_;
+
+    // Points to the player whose turn it currently is
+    Player * curr_player_;
+
+    // Stores the cards that have been played
+    SortedCardList play_area_;
+
 public:
     Model();
-    Suits suit();
-    Faces face();
-    void nextCard();
-    void resetCards();
-private:
-    int topCard_;
+
+    std::vector<std::unique_ptr<Player>> & getPlayers() const;
+    Player * getCurrPlayer() const;
+    SortedCardList & getPlayArea() const;
 }; // Model
 
 
