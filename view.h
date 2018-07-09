@@ -40,16 +40,16 @@ private:
 	DeckGUI deck;
 
 	// Member widgets:
-	Gtk::VBox panels;      
-		Gtk::HBox menuBar;   
-			Gtk::Button next_button;
-			Gtk::Button reset_button;
-		Gtk::Grid table;
-			vector<vector<Gtk::Image*>> tableSlots;
-		Gtk::HBox scoreboard;
-			struct Player;
-			std::vector<Player*> players;
-		Gtk::HBox hand;
+	Gtk::VBox panels;    
+
+	Gtk::HBox menuBar;   
+		Gtk::Button newGameButton;
+		Gtk::Button endGameButton;
+	Gtk::Grid table;
+		vector<vector<Gtk::Image*>> tableSlots;
+	Gtk::HBox scoreboard;
+		std::vector<Gtk::Button*> rageButtons;
+	Gtk::HBox hand;
 		vector<Gtk::Image*>	handCards;
 	Gtk::Image card;
 

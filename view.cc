@@ -1,15 +1,3 @@
-/*
- * MVC example of GTKmm program
- *
- * View class.  Is responsible for buttons (that user clicks) and for displaying
- * the top card of the deck.
- *
- *  Created by Jo Atlee on 06/07/09.
- *  Copyright 2009 UW. All rights reserved.
- *
- */
-
-
 #include "observer.h"
 #include "view.h"
 #include "controller.h"
@@ -18,48 +6,32 @@
 #include "DeckGUI.h"
 #include <iostream>
 
-struct View::Player {
-	Gtk::Button rage;
-	Player() : rage("Rage Quit") {}
-};
-
-// Creates buttons with labels. Sets butBox elements to have the same size, 
-// with 10 pixels between widgets
-View::View(Controller *c, Model *m) : model_(m), controller_(c), panels(false,10), menuBar(true, 10), table(), next_button( "next" ),
-reset_button( "reset" ), card(deck.null()) {
+View::View(Controller *c, Model *m) : model_(m), controller_(c), panels(false,10), menuBar(true, 10), newGameButton( "New Game" ),
+endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10), card(deck.null()) {
 
 	// Sets some properties of the window.
-    set_title( "CS246 MVC example" );
-	set_border_width( 10 );
+    set_title("Straights");
+	set_border_width(10);
 	
 	// Add panels to the window
 	add(panels);
 
-	// Set menu bar, table and players
+	// Set menu bar on top, followed by the table, scoreboard and hand
 	panels.add(menuBar);
 	panels.add(table);
 	panels.add(scoreboard);
-	card.set( deck.null() );
+	panels.add(hand);
+	card.set(deck.null());
 
 	// Add buttons to the box (a container). Buttons initially invisible
-	menuBar.add( next_button );
-	menuBar.add( reset_button );
+	menuBar.add(newGameButton);
+	menuBar.add(endGameButton);
 
 	// Associate button "clicked" events with local onButtonClicked() method defined below.
-	next_button.signal_clicked().connect( sigc::mem_fun( *this, &View::nextButtonClicked ) );
-	reset_button.signal_clicked().connect( sigc::mem_fun( *this, &View::resetButtonClicked ) );
-	
-	players.push_back(new Player());
-	players.push_back(new Player());
-	players.push_back(new Player());
-	players.push_back(new Player());
+	newGameButton.signal_clicked().connect( sigc::mem_fun( *this, &View::nextButtonClicked ) );
+	endGameButton.signal_clicked().connect( sigc::mem_fun( *this, &View::resetButtonClicked ) );
 
-	// players
-	scoreboard.add(players.at(0)->rage);
-	scoreboard.add(players.at(1)->rage);
-	scoreboard.add(players.at(2)->rage);
-	scoreboard.add(players.at(3)->rage);
-
+	// Define table spacing
 	table.set_row_spacing(10);
 	table.set_column_spacing(10);
 
@@ -72,6 +44,18 @@ reset_button( "reset" ), card(deck.null()) {
 			table.attach(*temp, x, y, temp->get_width(), temp->get_height());
 		}
 		tableSlots.push_back(rows);
+	}
+
+	// Add rage button to scoreboard
+	for (int i = 0; i < 4; i++) {
+		rageButtons.push_back(new Gtk::Button("rage quit"));
+		scoreboard.add(*rageButtons.at(i));
+	}
+
+	// Add empty cards to hand
+	for (int i = 0; i < 13; i++) {
+		handCards.push_back(new Gtk::Image(deck.null()));
+		hand.add(*handCards.at(i));
 	}
 
 	// The final step is to display the buttons (they display themselves)
