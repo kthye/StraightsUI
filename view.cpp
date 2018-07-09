@@ -34,7 +34,7 @@ endGameButton("End Game"), table(), scoreboard(true, 10), hand(true, 10) {
 	for (int y = 0; y < 4; y++) {
 		std::vector<Gtk::Image*> rows;
 		for (int x = 0; x < 13; x++) {
-			Gtk::Image* temp = new Gtk::Image();
+			Gtk::Image* temp = new Gtk::Image(deck.emptyImage());
 			rows.push_back(temp);
 			table.attach(*temp, x, y, temp->get_width(), temp->get_height());
 		}
@@ -49,9 +49,11 @@ endGameButton("End Game"), table(), scoreboard(true, 10), hand(true, 10) {
 
 	// Initialize placeholders to hand
 	for (int i = 0; i < 13; i++) {
-		handCards.push_back(new Gtk::Image());
+		handCards.push_back(new Gtk::Image(deck.emptyImage()));
 		hand.add(*handCards.at(i));
 	}
+
+	update();
 
 	// The final step is to display the buttons (they display themselves)
 	show_all();
