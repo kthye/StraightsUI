@@ -13,6 +13,11 @@ Model::Model() {
             deck_.push_back(std::unique_ptr<const Card>(new Card(static_cast<Suit>(s), static_cast<Rank>(r))));
         }
     }
+
+    for (size_t i = 0; i < 4; ++i) {
+        players_.push_back(std::unique_ptr<Player>(new Player()));
+    }
+
     /// FOR TESTING
     play_area_.addCard(deck_.at(4).get());
     play_area_.addCard(deck_.at(13).get());
