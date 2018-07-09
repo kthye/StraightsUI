@@ -2,7 +2,6 @@
  * Adapted from MVC example by Jo Atlee
  */
 
-
 #include "model.h"
 #include "Card.h"
 
@@ -14,4 +13,16 @@ Model::Model() {
             deck_.push_back(std::unique_ptr<const Card>(new Card(static_cast<Suit>(s), static_cast<Rank>(r))));
         }
     }
+}
+
+const std::vector<std::unique_ptr<const Player>> & Model::getPlayers() const {
+    return players_;
+}
+
+const Player * Model::getCurrPlayer() const {
+    return (*curr_player_).get();
+}
+
+const SortedCardList & Model::getPlayArea() const {
+    return play_area_;
 }
