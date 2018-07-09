@@ -14,22 +14,24 @@
 #define MVC_VIEW_H
 
 #include <gtkmm.h>
+#include <gtkmm/grid.h>
+#include <vector>
 #include "DeckGUI.h"
 #include "observer.h"
 
 class Controller;
-class StraightsModel;
+class Model;
 
 
 class View : public Gtk::Window, public Observer {
 public:
-        View( Controller*, StraightsModel* );
+    View( Controller*, Model* );
 	virtual ~View();
 	virtual void update();	// Observer Pattern: concrete update() method
 
 private:
 	// Observer Pattern: to access Model accessors without having to downcast subject
-	StraightsModel *model_;
+	Model *model_;
 	
 	// Strategy Pattern member (plus signal handlers)
 	Controller *controller_;
@@ -38,16 +40,23 @@ private:
 	DeckGUI deck;
 
 	// Member widgets:
-	Gtk::HBox panels;      // Main window divided into two horizontal panels
-	Gtk::VBox butBox;      // Vertical boxes for stacking buttons vertically
-	Gtk::Button next_button;
-	Gtk::Button reset_button;
+	Gtk::VBox panels;      
+		Gtk::HBox menuBar;   
+			Gtk::Button next_button;
+			Gtk::Button reset_button;
+		Gtk::Grid table;
+			vector<vector<Gtk::Image*>> tableSlots;
+		Gtk::HBox scoreboard;
+			struct Player;
+			std::vector<Player*> players;
+		Gtk::HBox hand;
+		vector<Gtk::Image*>	handCards;
 	Gtk::Image card;
 
 	// Signal handlers:
 	void nextButtonClicked();
 	void resetButtonClicked();
 
-}; // View
+}; 
 
 #endif

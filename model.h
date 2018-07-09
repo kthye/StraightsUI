@@ -22,9 +22,9 @@ const int numCards = numFaces * numSuits;
 enum Faces { NINE, TEN, JACK, QUEEN, KING, ACE, NOFACE };
 enum Suits { DIAMOND, CLUB, HEART, SPADE, NOSUIT };
 
-class StraightsModel : public Subject {
+class Model : public Subject {
 public:
-    StraightsModel();
+    Model();
     Suits suit();
     Faces face();
     void nextCard();

@@ -18,32 +18,62 @@
 #include "DeckGUI.h"
 #include <iostream>
 
+struct View::Player {
+	Gtk::Button rage;
+	Player() : rage("Rage Quit") {}
+};
+
 // Creates buttons with labels. Sets butBox elements to have the same size, 
 // with 10 pixels between widgets
-View::View(Controller *c, StraightsModel *m) : model_(m), controller_(c), panels(true,10), butBox(true, 10), next_button( "next" ), reset_button( "reset" ), card(deck.null()) {
+View::View(Controller *c, Model *m) : model_(m), controller_(c), panels(false,10), menuBar(true, 10), table(), next_button( "next" ),
+reset_button( "reset" ), card(deck.null()) {
 
 	// Sets some properties of the window.
-        set_title( "CS246 MVC example" );
+    set_title( "CS246 MVC example" );
 	set_border_width( 10 );
 	
 	// Add panels to the window
 	add(panels);
 
-	// Add button box and card image to the panels
-	panels.add( butBox );
-	panels.add( card );
+	// Set menu bar, table and players
+	panels.add(menuBar);
+	panels.add(table);
+	panels.add(scoreboard);
 	card.set( deck.null() );
 
 	// Add buttons to the box (a container). Buttons initially invisible
-	butBox.add( next_button );
-	butBox.add( reset_button );
-
+	menuBar.add( next_button );
+	menuBar.add( reset_button );
 
 	// Associate button "clicked" events with local onButtonClicked() method defined below.
 	next_button.signal_clicked().connect( sigc::mem_fun( *this, &View::nextButtonClicked ) );
 	reset_button.signal_clicked().connect( sigc::mem_fun( *this, &View::resetButtonClicked ) );
 	
-	
+	players.push_back(new Player());
+	players.push_back(new Player());
+	players.push_back(new Player());
+	players.push_back(new Player());
+
+	// players
+	scoreboard.add(players.at(0)->rage);
+	scoreboard.add(players.at(1)->rage);
+	scoreboard.add(players.at(2)->rage);
+	scoreboard.add(players.at(3)->rage);
+
+	table.set_row_spacing(10);
+	table.set_column_spacing(10);
+
+	// Add cards to table
+	for (int y = 0; y < 4; y++) {
+		vector<Gtk::Image*> rows;
+		for (int x = 0; x < 13; x++) {
+			Gtk::Image* temp = new Gtk::Image(deck.null());
+			rows.push_back(temp);
+			table.attach(*temp, x, y, temp->get_width(), temp->get_height());
+		}
+		tableSlots.push_back(rows);
+	}
+
 	// The final step is to display the buttons (they display themselves)
 	show_all();
 

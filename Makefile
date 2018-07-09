@@ -2,7 +2,7 @@ CXX= g++
 CXXFLAGS = -Wall -O -g `pkg-config gtkmm-3.0 --cflags`
 LDFLAGS=`pkg-config gtkmm-3.0 --libs`
 OBJS = subject.o model.o controller.o DeckGUI.o view.o main.o
-EXEC = straights
+EXEC = mvc
 
 $(EXEC): $(OBJS)
 	$(CXX) $(OBJS) $(CXXFLAGS) $(LDFLAGS) -o $(EXEC)

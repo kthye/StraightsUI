@@ -10,24 +10,24 @@
  */
 
 
-#include "StraightsModel.h"
+#include "model.h"
 
 
-StraightsModel::StraightsModel() : topCard_(-1) {}
+Model::Model() : topCard_(-1) {}
 
-Suits StraightsModel::suit() {
+Suits Model::suit() {
   if (topCard_ == -1) return NOSUIT;
   
   return (Suits) (topCard_ % numSuits);
 }
 
-Faces StraightsModel::face() {
+Faces Model::face() {
   if (topCard_ == -1) return NOFACE;
 
   return (Faces) (topCard_ / numSuits);
 }
 
-void StraightsModel::nextCard() {
+void Model::nextCard() {
   if (topCard_ == numCards-1) return;
 
   topCard_ += 1;
@@ -36,7 +36,7 @@ void StraightsModel::nextCard() {
 }
 
 
-void StraightsModel::resetCards() {
+void Model::resetCards() {
   topCard_ = -1;
   notify();
 }

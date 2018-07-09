@@ -13,18 +13,18 @@
 #ifndef MVC_CONTROLLER_H
 #define MVC_CONTROLLER_H
 
- 
+
 #include <gtkmm.h>
 
-class StraightsModel;
+class Model;
 
 class Controller {
 public:
-   Controller( StraightsModel* );
+   Controller( Model* );
    void nextButtonClicked();
    void resetButtonClicked();
 private:
-   StraightsModel *model_;
+   Model *model_;
 }; // Controller
 
 

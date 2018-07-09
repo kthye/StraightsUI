@@ -14,7 +14,7 @@
 #include "model.h"
 
 
-Controller::Controller(StraightsModel *m) : model_(m) {}
+Controller::Controller(Model *m) : model_(m) {}
 
 
 void Controller::nextButtonClicked() {

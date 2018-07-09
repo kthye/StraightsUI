@@ -15,7 +15,7 @@
 #include <vector>
 using std::vector;
 
-#include "StraightsModel.h"
+#include "model.h"
 
 
 

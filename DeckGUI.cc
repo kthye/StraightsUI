@@ -17,7 +17,7 @@ using std::transform;
 // The deck will load the contents into pixel buffers for later use.
 const char * image_names[] = {   
 	// Set up NINE of {DIAMOND,CLUB,HEART,SPADE}
-	"cards_png/0_0.png", "cards_png/0_1.png", "cards_png/0_2.png", "cards_png/0_3.png",
+	"img/0_0.png", "cards_png/0_1.png", "cards_png/0_2.png", "cards_png/0_3.png",
 	// Set up TEN of {DIAMOND,CLUB,HEART,SPADE}
 	"cards_png/1_0.png", "cards_png/1_1.png", "cards_png/1_2.png", "cards_png/1_3.png",
 	// Set up JACK of {DIAMOND,CLUB,HEART,SPADE}
@@ -29,7 +29,7 @@ const char * image_names[] = {
 	// Set up ACE of {DIAMOND,CLUB,HEART,SPADE}
 	"cards_png/5_0.png", "cards_png/5_1.png", "cards_png/5_2.png", "cards_png/5_3.png",
 	// Set up the back of a card for a place holder/null card
-	"cards_png/back_1.png"
+	"img/nothing.png"
 }; 
 
 // Loads the image from the specified file name into a pixel buffer.
