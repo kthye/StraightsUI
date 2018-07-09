@@ -14,3 +14,7 @@ const CardList & Player::discard() const {
 size_t Player::score() const {
     return score_;
 }
+
+void Player::setHand(CardList && hand) {
+    hand_ = std::move(hand);
+}

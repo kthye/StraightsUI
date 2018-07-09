@@ -25,6 +25,7 @@ public:
     const CardList & discard() const;
     size_t score() const;
 
+    void setHand(CardList && hand);
 };
 
 #endif

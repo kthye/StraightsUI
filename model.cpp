@@ -19,6 +19,16 @@ Model::Model() {
     play_area_.addCard(deck_.at(22).get());
     play_area_.addCard(deck_.at(23).get());
     play_area_.addCard(deck_.at(44).get());
+
+    auto it = deck_.begin();
+    for (size_t pIdx = 0; pIdx < 4; ++pIdx) {
+        CardList hand;
+        for (size_t cIdx = 0; cIdx < 13; ++cIdx) {
+            hand.addCard((*it).get());
+            ++it;
+        }
+        players_.at(pIdx)->setHand(std::move(hand));
+    }
     /// END TESTING
 }
 
