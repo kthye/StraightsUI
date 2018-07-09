@@ -49,7 +49,7 @@ private:
 	Gtk::HBox scoreboard;
 		std::vector<Gtk::Button*> rageButtons;
 	Gtk::HBox hand;
-		std::vector<Gtk::Image*>	handCards;
+		std::vector<Gtk::Image*> handCards;
 	Gtk::Image card;
 
 };

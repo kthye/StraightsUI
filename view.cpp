@@ -72,6 +72,17 @@ void View::update() {
 	setTableRow(model_->getPlayArea(), HEART);
 	setTableRow(model_->getPlayArea(), SPADE);
 
+	for (auto it = handCards.begin(); it != handCards.end(); ++it) {
+		hand.remove(**it);
+		delete *it;
+	}
+	handCards.clear();
+
+	for (auto it = model_->getCurrPlayer()->hand().begin(); it != model_->getCurrPlayer()->hand().end(); ++it) {
+		Gtk::Image* temp = new Gtk::Image(deck.cardImage(**it));
+		handCards.push_back(temp);
+		hand.add(*temp);
+	}
 }
 
 void View::setTableRow(const SortedCardList &playArea, Suit suit) {
