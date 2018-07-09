@@ -21,7 +21,7 @@ class Model : public Subject {
     std::vector<std::unique_ptr<Player>> players_;
 
     // Points to the player whose turn it currently is
-    Player * curr_player_;
+    std::vector<std::unique_ptr<Player>>::iterator curr_player_;
 
     // Stores the cards that have been played
     SortedCardList play_area_;
@@ -29,7 +29,7 @@ class Model : public Subject {
 public:
     Model();
 
-    const std::vector<std::unique_ptr<const Player>> & getPlayers() const;
+    const std::vector<std::unique_ptr<Player>> & getPlayers() const;
     const Player * getCurrPlayer() const;
     const SortedCardList & getPlayArea() const;
 

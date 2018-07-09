@@ -15,7 +15,7 @@ Model::Model() {
     }
 }
 
-const std::vector<std::unique_ptr<const Player>> & Model::getPlayers() const {
+const std::vector<std::unique_ptr<Player>> & Model::getPlayers() const {
     return players_;
 }
 
