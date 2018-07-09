@@ -2,9 +2,10 @@
  * Adapted from MVC example by Caroline Kierstead
  */
 
-#include "DeckGUI.h"
 #include <algorithm>
 #include <iterator>
+#include "DeckGUI.h"
+#include "Card.h"
 
 // Sets up an array of the Portable Network Graphics (PNG) file names that contain the necessary card images.
 // The deck will load the contents into pixel buffers for later use.
@@ -40,7 +41,7 @@ const char * image_names[] = {
 };
 
 // Loads the image from the specified file name into a pixel buffer.
-Glib::RefPtr<Gdk::Pixbuf> createPixbuf(const string & name) {
+Glib::RefPtr<Gdk::Pixbuf> createPixbuf(const std::string & name) {
 	return Gdk::Pixbuf::create_from_file( name );
 } // createPixbuf
 
@@ -54,8 +55,8 @@ DeckGUI::DeckGUI()  {
 } // DeckGUI::DeckGUI
 
 // Returns the image for the specified card.
-Glib::RefPtr<Gdk::Pixbuf> DeckGUI::cardImage(Suit s, Rank r) {
-    size_t idx = static_cast<size_t>(r) * 4 + static_cast<size_t>(s);
+Glib::RefPtr<Gdk::Pixbuf> DeckGUI::cardImage(const Card & c) {
+    size_t idx = static_cast<size_t>(c.getRank()) * 4 + static_cast<size_t>(c.getSuit());
     return deck.at(idx);
 } // DeckGUI::cardImage
 

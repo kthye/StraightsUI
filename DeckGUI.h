@@ -7,6 +7,8 @@
 #include <gdkmm/pixbuf.h>
 #include <vector>
 
+class Card;
+
 class DeckGUI {
     std::vector<Glib::RefPtr<Gdk::Pixbuf >> deck;
 
