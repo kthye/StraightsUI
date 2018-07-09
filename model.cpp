@@ -18,7 +18,7 @@ Model::Model() {
         players_.push_back(std::unique_ptr<Player>(new Player()));
     }
 
-    curr_player_ = players.begin();
+    curr_player_ = players_.begin();
 
     /// FOR TESTING
     play_area_.addCard(deck_.at(4).get());
