@@ -5,11 +5,11 @@
 #include "subject.h"
 #include <iostream>
 
-View::View(Controller *c, Model *m) : model_(m), panels(false,10), menuBar(true, 10), newGameButton("New Game"),
-endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10) {
+View::View(Controller *c, Model *m) : model_(m), deck(), panels(false, 10), menuBar(true, 10), newGameButton("New Game"),
+endGameButton("End Game"), table(), scoreboard(true, 10), hand(true, 10) {
 
 	// Sets some properties of the window.
-    set_title("Straights");
+	set_title("Straights");
 	set_border_width(10);
 
 	// Add panels to the window
@@ -65,24 +65,73 @@ View::~View() {}
 
 
 void View::update() {
-	SortedCardList playArea = model_->getPlayArea();
+	setTableRow(model_->getPlayArea(), CLUB);
+	setTableRow(model_->getPlayArea(), DIAMOND);
+	setTableRow(model_->getPlayArea(), HEART);
+	setTableRow(model_->getPlayArea(), SPADE);
+
 }
 
-void setTableRow(SortedCardList &playArea, Suit suit) {
+void View::setTableRow(const SortedCardList &playArea, Suit suit) {
 	switch (suit) {
 	case CLUB:
 		for (auto it = playArea.clubs_begin(); it != playArea.clubs_end(); ++it) {
-			if (tableSlots.at(0).at((*it)->getRank);
-		}
-	case DIAMOND:
-	case HEART:
-	case SPADE:
-	default:
+			int x = static_cast<int>((*it)->getRank());
+			int y = 0;
+			std::vector<Gtk::Image*> &tableRow = tableSlots.at(y);
 
+			table.remove(*tableRow.at(x));
+
+			delete tableRow.at(x);
+			tableRow.at(x) = new Gtk::Image(deck.cardImage(**it));
+
+			table.attach(*tableRow.at(x), x, y, tableRow.at(x)->get_width(), tableRow.at(x)->get_height());
+		}
+		break;
+	case DIAMOND:
+		for (auto it = playArea.diamonds_begin(); it != playArea.diamonds_end(); ++it) {
+			int x = static_cast<int>((*it)->getRank());
+			int y = 1;
+			std::vector<Gtk::Image*> &tableRow = tableSlots.at(y);
+
+			table.remove(*tableRow.at(x));
+
+			delete tableRow.at(x);
+			tableRow.at(x) = new Gtk::Image(deck.cardImage(**it));
+
+			table.attach(*tableRow.at(x), x, y, tableRow.at(x)->get_width(), tableRow.at(x)->get_height());
+		}
+		break;
+	case HEART:
+		for (auto it = playArea.hearts_begin(); it != playArea.hearts_end(); ++it) {
+			int x = static_cast<int>((*it)->getRank());
+			int y = 2;
+			std::vector<Gtk::Image*> &tableRow = tableSlots.at(y);
+
+			table.remove(*tableRow.at(x));
+
+			delete tableRow.at(x);
+			tableRow.at(x) = new Gtk::Image(deck.cardImage(**it));
+
+			table.attach(*tableRow.at(x), x, y, tableRow.at(x)->get_width(), tableRow.at(x)->get_height());
+		}
+		break;
+	case SPADE:
+		for (auto it = playArea.spades_begin(); it != playArea.spades_end(); ++it) {
+			int x = static_cast<int>((*it)->getRank());
+			int y = 3;
+			std::vector<Gtk::Image*> &tableRow = tableSlots.at(y);
+
+			table.remove(*tableRow.at(x));
+
+			delete tableRow.at(x);
+			tableRow.at(x) = new Gtk::Image(deck.cardImage(**it));
+
+			table.attach(*tableRow.at(x), x, y, tableRow.at(x)->get_width(), tableRow.at(x)->get_height());
+		}
+		break;
+	default:
+		break;
 	}
 }
 
-
-std::vector<std::unique_ptr<Player>> & getPlayers() const;
-Player * getCurrPlayer() const;
-SortedCardList & getPlayArea() const;

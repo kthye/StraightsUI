@@ -17,6 +17,9 @@
 #include <gtkmm/grid.h>
 #include <vector>
 #include "observer.h"
+#include "DeckGUI.h"
+#include "SortedCardList.h"
+#include "model.h"
 
 class Controller;
 class Model;
@@ -29,8 +32,11 @@ public:
 	virtual void update();	// Observer Pattern: concrete update() method
 
 private:
+	void setTableRow(const SortedCardList &playArea, Suit suit);
 	// Observer Pattern: to access Model accessors without having to downcast subject
 	Model *model_;
+
+	DeckGUI deck;
 
 	// Member widgets:
 	Gtk::VBox panels;
