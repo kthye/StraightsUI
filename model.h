@@ -2,7 +2,6 @@
  * Adapted from MVC example by Jo Atlee
  */
 
-
 #ifndef STRAIGHTS_MODEL_H
 #define STRAIGHTS_MODEL_H
 
@@ -13,7 +12,6 @@
 #include "Player.h"
 
 class Card;
-class Player;
 
 class Model : public Subject {
     // The deck owns all card objects passed around during the game
@@ -31,10 +29,10 @@ class Model : public Subject {
 public:
     Model();
 
-    std::vector<std::unique_ptr<Player>> & getPlayers() const;
-    Player * getCurrPlayer() const;
-    SortedCardList & getPlayArea() const;
-}; // Model
+    const std::vector<std::unique_ptr<const Player>> & getPlayers() const;
+    const Player * getCurrPlayer() const;
+    const SortedCardList & getPlayArea() const;
 
+}; // Model
 
 #endif
