@@ -5,7 +5,7 @@
 #include "subject.h"
 #include <iostream>
 
-View::View(Controller *c, Model *m) : model_(m), panels(false,10), menuBar(true, 10), newGameButton( "New Game" ),
+View::View(Controller *c, Model *m) : model_(m), panels(false,10), menuBar(true, 10), newGameButton("New Game"),
 endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10) {
 
 	// Sets some properties of the window.
@@ -30,7 +30,7 @@ endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10) {
 	table.set_row_spacing(10);
 	table.set_column_spacing(10);
 
-	// Add cards to table
+	// Initialize placeholders to table
 	for (int y = 0; y < 4; y++) {
 		std::vector<Gtk::Image*> rows;
 		for (int x = 0; x < 13; x++) {
@@ -47,7 +47,7 @@ endGameButton( "End Game" ), table(), scoreboard(true, 10), hand(true, 10) {
 		scoreboard.add(*rageButtons.at(i));
 	}
 
-	// Add empty cards to hand
+	// Initialize placeholders to hand
 	for (int i = 0; i < 13; i++) {
 		handCards.push_back(new Gtk::Image());
 		hand.add(*handCards.at(i));
@@ -65,11 +65,24 @@ View::~View() {}
 
 
 void View::update() {
-  // Suit suit = model_->suit();
-  // Faces face = model_->face();
-  // if ( suit == NOSUIT )
-  //   card.set( deck.null() );
-  // else
-  //   card.set( deck.image(face, suit) );
-
+	SortedCardList playArea = model_->getPlayArea();
 }
+
+void setTableRow(SortedCardList &playArea, Suit suit) {
+	switch (suit) {
+	case CLUB:
+		for (auto it = playArea.clubs_begin(); it != playArea.clubs_end(); ++it) {
+			if (tableSlots.at(0).at((*it)->getRank);
+		}
+	case DIAMOND:
+	case HEART:
+	case SPADE:
+	default:
+
+	}
+}
+
+
+std::vector<std::unique_ptr<Player>> & getPlayers() const;
+Player * getCurrPlayer() const;
+SortedCardList & getPlayArea() const;
