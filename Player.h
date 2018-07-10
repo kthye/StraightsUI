@@ -3,6 +3,8 @@
 
 #include "CardList.h"
 
+enum PlayerType { HUMAN, COMPUTER };
+
 class Player {
     // Spec fields
     // hand - the cards in the player's hand
@@ -15,17 +17,22 @@ class Player {
     // The player's overall score
     size_t score_;
 
+    // The type of this player
+    PlayerType type_;
+
 public:
     // modifies: hand, discard, score
     // ensures: hand and discard are initialized empty
     // ensures: score is initialized to 0
-    Player();
+    Player(PlayerType type = HUMAN);
 
     const CardList & hand() const;
     const CardList & discard() const;
     size_t score() const;
+    PlayerType type() const;
 
     void setHand(CardList && hand);
+    void setType(PlayerType type);
 };
 
 #endif

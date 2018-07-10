@@ -26,12 +26,47 @@ class Model : public Subject {
     // Stores the cards that have been played
     SortedCardList play_area_;
 
+    // The current seed used to shuffle the deck
+    int seed_;
+
+    // Whether the types of the player objects are stale
+    bool should_set_player_types_;
+
+    // Initializes the internal deck representation
+    void initDeck();
+
+    // Initializes PLAYER_COUNT player objects
+    void initPlayers();
+
+    // Shuffles the internal deck representation
+    void shuffleDeck();
+
+    // Deals the first 13 cards to player 1, second 13 cards to player 2, etc.
+    void dealHands();
+
 public:
+    // The number of cards in the deck
+    static const size_t CARD_COUNT;
+
+    // The number of players in a game
+    static const size_t PLAYER_COUNT;
+
+    // The number of cards in each player's hand
+    static const size_t HAND_SIZE;
+
+    // The card which determines the player who should play first
+    static const Card STARTING_CARD;
+
     Model();
 
     const std::vector<std::unique_ptr<Player>> & getPlayers() const;
     const Player * getCurrPlayer() const;
     const SortedCardList & getPlayArea() const;
+    bool shouldSetPlayerTypes() const;
+
+    void setPlayerTypes(const std::vector<PlayerType> & types);
+
+    void reset();
 
 }; // Model
 
