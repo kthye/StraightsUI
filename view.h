@@ -26,11 +26,6 @@ class Model;
 
 
 class View : public Gtk::Window, public Observer {
-public:
-    View( Controller*, Model* );
-	virtual ~View();
-	virtual void update();	// Observer Pattern: concrete update() method
-
 private:
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 	// Observer Pattern: to access Model accessors without having to downcast subject
@@ -40,18 +35,34 @@ private:
 
 	// Member widgets:
 	Gtk::VBox panels;
-
 	Gtk::HBox menuBar;
 		Gtk::Button newGameButton;
 		Gtk::Button endGameButton;
+    Gtk::Dialog newGameDialog;
+			// Gtk::HBox seedBox;
+			Gtk::HBox labelBox;
+			Gtk::HBox playerBox;
+			Gtk::HBox startBox;
+			Gtk::Button startNewGameButton;
+			Gtk::Button cancelButton;
+      std::vector<Gtk::Label*> playerLabels;
+      std::vector<Gtk::Button*> playerToggleButtons;
 	Gtk::Grid table;
 		std::vector<std::vector<Gtk::Image*>> tableSlots;
 	Gtk::HBox scoreboard;
 		std::vector<Gtk::Button*> rageButtons;
 	Gtk::HBox hand;
-		std::vector<Gtk::Image*> handCards;
+		std::vector<Gtk::Image*>	handCards;
 	Gtk::Image card;
-
+protected:
+	void onTogglePlayerClicked(int playerNumber);
+	void onStartNewGameButtonClicked();
+	void onCancelButtonClicked();
+  void onNewGameButtonClicked();
+public:
+  View( Controller*, Model* );
+  virtual ~View();
+  virtual void update();	// Observer Pattern: concrete update() method
 };
 
 #endif
