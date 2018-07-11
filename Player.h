@@ -20,16 +20,20 @@ class Player {
     // The type of this player
     PlayerType type_;
 
+    // This player's number (e.g. Player 2 has number 2)
+    size_t number_;
+
 public:
     // modifies: hand, discard, score
     // ensures: hand and discard are initialized empty
     // ensures: score is initialized to 0
-    Player(PlayerType type = HUMAN);
+    Player(PlayerType type, size_t number);
 
     const CardList & hand() const;
     const CardList & discard() const;
     size_t score() const;
     PlayerType type() const;
+    size_t number() const;
 
     void setHand(CardList && hand);
     void setType(PlayerType type);

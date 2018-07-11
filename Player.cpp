@@ -1,7 +1,7 @@
 #include "Player.h"
 
-Player::Player(PlayerType type)
-    : score_{0}, type_{type} {}
+Player::Player(PlayerType type, size_t number)
+    : score_{0}, type_{type}, number_{number} {}
 
 const CardList & Player::hand() const {
     return hand_;
@@ -17,6 +17,10 @@ size_t Player::score() const {
 
 PlayerType Player::type() const {
     return type_;
+}
+
+size_t Player::number() const {
+    return number_;
 }
 
 void Player::setHand(CardList && hand) {

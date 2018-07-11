@@ -89,7 +89,7 @@ void Model::initDeck() {
 
 void Model::initPlayers() {
     for (size_t i = 0; i < PLAYER_COUNT; ++i) {
-        players_.push_back(std::unique_ptr<Player>(new Player()));
+        players_.push_back(std::unique_ptr<Player>(new Player(HUMAN, i+1)));
     }
 }
 
