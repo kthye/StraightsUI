@@ -32,6 +32,9 @@ class Model : public Subject {
     // Whether a game is currently in progress
     bool game_in_progress_;
 
+    // Whether a round is currently in progress
+    bool round_in_progress_;
+
     // The current error, if it exists
     std::string error_;
 
@@ -49,6 +52,9 @@ class Model : public Subject {
 
     // Sets the types of the internal player representation to the passed types
     void setPlayerTypes(const std::vector<PlayerType> & types);
+
+    // Resets all players' scores to 0
+    void resetPlayerScores();
 
     // Advances curr_player_ to the next player
     void advancePlayer();
@@ -75,6 +81,7 @@ public:
     std::string error() const;
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);
+    void newRound();
     void playCard(const Card * c);
     void clearError();
 

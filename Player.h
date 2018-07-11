@@ -39,6 +39,7 @@ public:
     void setType(PlayerType type);
     void removeFromHand(const Card * c);
     void addToDiscard(const Card * c);
+    void resetScore();
 };
 
 #endif

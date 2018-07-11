@@ -38,3 +38,7 @@ void Player::removeFromHand(const Card * c) {
 void Player::addToDiscard(const Card * c) {
     discard_.addCard(c);
 }
+
+void Player::resetScore() {
+    score_ = 0;
+}

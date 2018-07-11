@@ -13,7 +13,7 @@ const size_t Model::HAND_SIZE = Model::CARD_COUNT / Model::PLAYER_COUNT;
 const std::string Model::ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
 
 Model::Model()
-: seed_{0}, game_in_progress_{false} {
+: seed_{0}, game_in_progress_{false}, round_in_progress_{false} {
     initDeck();
     initPlayers();
 
@@ -52,6 +52,14 @@ void Model::newGame(const std::vector<PlayerType> & types, int seed) {
     shuffleDeck();
     dealHands();
     game_in_progress_ = true;
+    round_in_progress_ = true;
+    notify();
+}
+
+void Model::newRound() {
+    shuffleDeck();
+    dealHands();
+    round_in_progress_ = true;
     notify();
 }
 
@@ -125,6 +133,12 @@ void Model::setPlayerTypes(const std::vector<PlayerType> & types) {
     for (auto player_it = players_.begin(); player_it != players_.end(); ++player_it) {
         (*player_it)->setType(*types_it);
         ++types_it;
+    }
+}
+
+void Model::resetPlayerScores() {
+    for (auto it = players_.begin(); it != players_.end(); ++it) {
+        (*it)->resetScore();
     }
 }
 

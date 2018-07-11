@@ -17,11 +17,14 @@
 Controller::Controller(Model *m) : model_(m) {}
 
 
-void Controller::nextButtonClicked() {
-     // model_->nextCard();
-} 
+void Controller::newGame(const std::vector<PlayerType> & types, int seed) {
+    model->newGame(types, seed);
+}
 
+void Controller::playCard(const Card * c) {
+    model->playCard(c);
+}
 
-void Controller::resetButtonClicked() {
-     // model_->resetCards();
+void Controller::playComputer() {
+
 }
