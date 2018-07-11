@@ -72,7 +72,7 @@ public:
     // The error message shown if the player tries to discard with a legal play
     static const std::string ERR_HAS_LEGAL_PLAY;
 
-    Model();
+    Model();  
 
     const std::vector<std::unique_ptr<Player>> & players() const;
     const Player * currPlayer() const;

@@ -8,7 +8,7 @@
 const int BORDER_LEN = 10;
 
 View::View(Controller *c, Model *m) : model_(m), deck(), panels(false, BORDER_LEN), menuBar(true, BORDER_LEN),
-newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), newGameDialog("Start New Game"),
+newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), newGameDialog("Start New Game", true),
 labelBox(true, BORDER_LEN), playerBox(true, BORDER_LEN), startBox(true, BORDER_LEN), startNewGameButton("Start New Game"),
 cancelButton("Cancel"), seedLabel("Seed: 0"), table(), playerDashboard(), currentPlayerLabel("Player 1's Turn"),
 currentScoreLabel("Score: 0"), rageButton("f#$k!"), currentDiscardsLabel("Discards: 0"),
@@ -154,16 +154,24 @@ bool View::onCardClick(GdkEventButton* eventButton) {
 }
 
 void View::update() {
+	if (!model_->gameInProgress()) {
+			// TODO: open the modal but do not let it be closed
+			onNewGameButtonClicked();
+	} else {
+		if (model_->error().empty()) {
+			// Update table
+			for (int s = CLUB; s != SUIT_COUNT; ++s) {
+				setTableRow(model_->playArea(), static_cast<Suit>(s));
+			}
 
-	// Update table
-	for (int s = CLUB; s != SUIT_COUNT; ++s) {
-		setTableRow(model_->getPlayArea(), static_cast<Suit>(s));
-	}
-
-	// Update hand
-	int count = 0;
-	for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
-		handImages.at(count++)->set(deck.cardImage(**it));
+			// Update hand
+			int count = 0;
+			for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
+				handImages.at(count++)->set(deck.cardImage(**it));
+			}
+		} else {
+			// TODO: display error message
+		}
 	}
 }
 
