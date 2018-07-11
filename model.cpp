@@ -6,6 +6,9 @@
 #include "model.h"
 #include "Card.h"
 #include "GameLogic.h"
+#include "PlayController.h"
+#include "HumanPlayer.h"
+#include "ComputerPlayer.h"
 
 const size_t Model::CARD_COUNT = 52;
 const size_t Model::PLAYER_COUNT = 4;
@@ -15,7 +18,6 @@ const std::string Model::ERR_HAS_LEGAL_PLAY = "You have a legal play. You may no
 Model::Model()
 : seed_{0}, game_in_progress_{false}, round_in_progress_{false} {
     initDeck();
-    initPlayers();
 }
 
 const std::vector<std::unique_ptr<Player>> & Model::players() const {
@@ -39,7 +41,7 @@ std::string Model::error() const {
 }
 
 void Model::newGame(const std::vector<PlayerType> & types, int seed) {
-    setPlayerTypes(types);
+    initPlayers(types);
     seed_ = seed;
     shuffleDeck();
     dealHands();
@@ -72,6 +74,10 @@ void Model::playCard(const Card * c) {
     notify();
 }
 
+void Model::play(const PlayController & pc) {
+    (*curr_player_)->play(pc);
+}
+
 void Model::clearError() {
     error_.clear();
     notify();
@@ -87,9 +93,13 @@ void Model::initDeck() {
     }
 }
 
-void Model::initPlayers() {
+void Model::initPlayers(const std::vector<PlayerType> & types) {
     for (size_t i = 0; i < PLAYER_COUNT; ++i) {
-        players_.push_back(std::unique_ptr<Player>(new Player(HUMAN, i+1)));
+        if (types.at(i) == HUMAN) {
+            players_.push_back(std::unique_ptr<Player>(new HumanPlayer(i+1)));
+        } else {
+            players_.push_back(std::unique_ptr<Player>(new ComputerPlayer(i+1)));
+        }
     }
 }
 
@@ -119,15 +129,6 @@ void Model::dealHands() {
     }
 }
 
-// Require that types has length at least 4
-void Model::setPlayerTypes(const std::vector<PlayerType> & types) {
-    auto types_it = types.begin();
-    for (auto player_it = players_.begin(); player_it != players_.end(); ++player_it) {
-        (*player_it)->setType(*types_it);
-        ++types_it;
-    }
-}
-
 void Model::resetPlayerScores() {
     for (auto it = players_.begin(); it != players_.end(); ++it) {
         (*it)->resetScore();
@@ -139,4 +140,5 @@ void Model::advancePlayer() {
     if (curr_player_ == players_.end()) {
         curr_player_ = players_.begin();
     }
+    // curr_player_.play()
 }

@@ -13,7 +13,9 @@
 #include "controller.h"
 #include "model.h"
 
-Controller::Controller(Model *m) : model_(m) {}
+Controller::Controller(Model *m) : play_controller_{m}, model_(m) {
+    model_->subscribe(this);
+}
 
 
 void Controller::newGame(const std::vector<PlayerType> & types, int seed) {
@@ -25,6 +27,6 @@ void Controller::playCard(const Card * c) {
     model_->playCard(c);
 }
 
-void Controller::playComputer() {
-
+void Controller::update() {
+    model_->play(play_controller_);
 }

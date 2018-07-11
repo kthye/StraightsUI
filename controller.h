@@ -16,17 +16,18 @@
 #include <gtkmm.h>
 #include "Card.h"
 #include "Player.h"
+#include "observer.h"
+#include "model.h"
+#include "PlayController.h"
 
-class Model;
-enum PlayerType;
-
-class Controller {
-    // Performs the computer's turn until a human player turn is reached
-    void playComputer();
+class Controller : public Observer {
+    PlayController play_controller_;
 public:
    Controller( Model* );
    void newGame(const std::vector<PlayerType> & types, int seed = 0);
    void playCard(const Card * c);
+
+   void update();
 private:
    Model *model_;
 }; // Controller

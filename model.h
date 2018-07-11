@@ -12,6 +12,9 @@
 #include "Player.h"
 
 class Card;
+class PlayController;
+
+enum PlayerType { HUMAN, COMPUTER };
 
 class Model : public Subject {
     // The deck owns all card objects passed around during the game
@@ -42,16 +45,13 @@ class Model : public Subject {
     void initDeck();
 
     // Initializes PLAYER_COUNT player objects
-    void initPlayers();
+    void initPlayers(const std::vector<PlayerType> & types);
 
     // Shuffles the internal deck representation
     void shuffleDeck();
 
     // Deals the first 13 cards to player 1, second 13 cards to player 2, etc.
     void dealHands();
-
-    // Sets the types of the internal player representation to the passed types
-    void setPlayerTypes(const std::vector<PlayerType> & types);
 
     // Resets all players' scores to 0
     void resetPlayerScores();
@@ -84,6 +84,7 @@ public:
     void newRound();
     void playCard(const Card * c);
     void clearError();
+    void play(const PlayController & pc);
 
 }; // Model
 
