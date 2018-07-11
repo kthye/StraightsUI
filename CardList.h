@@ -50,6 +50,9 @@ public:
     // returns: true if the CardList contains c; false otherwise
     bool contains(const Card * c) const;
 
+		// TODO: size spec
+		size_t size() const;
+
 	// Spec fields: it_card is an iterator to a card in card_list or the end of card_list
 	class iterator {
         std::vector<const Card*> cards_;

@@ -59,6 +59,9 @@ class Model : public Subject {
     // Advances curr_player_ to the next player
     void advancePlayer();
 
+    // Calculates player scores and updates
+    void calculatePlayerScores();
+
 public:
     // The number of cards in the deck
     static const size_t CARD_COUNT;
@@ -78,6 +81,7 @@ public:
     const Player * currPlayer() const;
     const SortedCardList & playArea() const;
     bool gameInProgress() const;
+    bool roundInProgress() const;
     std::string error() const;
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);

@@ -34,6 +34,7 @@ public:
     void setHand(CardList && hand);
     void removeFromHand(const Card * c);
     void addToDiscard(const Card * c);
+    void incramentScore(int score);
     void resetScore();
     void playCard(const Card * c);
 

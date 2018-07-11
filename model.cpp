@@ -36,6 +36,10 @@ bool Model::gameInProgress() const {
     return game_in_progress_;
 }
 
+bool Model::roundInProgress() const {
+  return round_in_progress_;
+}
+
 std::string Model::error() const {
     return error_;
 }
@@ -135,10 +139,20 @@ void Model::resetPlayerScores() {
     }
 }
 
+void Model::calculatePlayerScores() {
+  for (auto it = players_.begin(); it != players_.end(); ++it) {
+    (*it)->incramentScore(GameLogic::calculateScore((*it)->discard()));
+  }
+}
+
 void Model::advancePlayer() {
     ++curr_player_;
     if (curr_player_ == players_.end()) {
         curr_player_ = players_.begin();
     }
-    // curr_player_.play()
+
+    if ((*curr_player_)->hand().isEmpty()) {
+      calculatePlayerScores();
+      round_in_progress_ = false;
+    }
 }

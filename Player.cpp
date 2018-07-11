@@ -32,6 +32,10 @@ void Player::addToDiscard(const Card * c) {
     discard_.addCard(c);
 }
 
+void Player::incramentScore(int score) {
+  score_ += score;
+}
+
 void Player::resetScore() {
     score_ = 0;
 }

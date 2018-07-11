@@ -53,6 +53,10 @@ bool CardList::contains(const Card * card) const {
     return false;
 }
 
+size_t CardList::size() const {
+  return pImpl_->cards_.size();
+}
+
 CardList::iterator::iterator(std::vector<const Card *> &cards, int cardIndex) : cards_{ cards },
 	cardIndex_{ cardIndex } {}
 

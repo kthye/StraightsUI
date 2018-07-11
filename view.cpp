@@ -13,7 +13,7 @@ newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), ne
 labelBox(true, BORDER_LEN), playerBox(true, BORDER_LEN), startBox(true, BORDER_LEN), startNewGameButton("Start New Game"),
 cancelButton("Cancel"), seedLabel("Seed: 0"), table(), playerDashboard(), currentPlayerLabel("Player 1's Turn"),
 currentScoreLabel("Score: 0"), rageButton("f#$k!"), currentDiscardsLabel("Discards: 0"),
-hand(true, 10) {
+hand(true, 10), logBox(true, 10), logMessage("")  {
 
 	// Sets some properties of the window.
 	set_title("Straights");
@@ -27,6 +27,7 @@ hand(true, 10) {
 	panels.add(table);
 	panels.add(playerDashboard);
 	panels.add(hand);
+	panels.add(logBox);
 
 	// Add buttons to the box (a container). Buttons initially invisible
 	menuBar.add(newGameButton);
@@ -103,6 +104,10 @@ hand(true, 10) {
 		handImages.push_back(std::unique_ptr<Gtk::Image>(image));
 	}
 
+	// Initialize an empty log box
+	logBox.set_halign(Gtk::ALIGN_END);
+	logBox.add(logMessage);
+
 	// The final step is to display the buttons (they display themselves)
 	show_all();
 
@@ -122,7 +127,6 @@ void View::onNewGameButtonClicked() {
 	} else {
 		seedLabel.set_text("Seed: " + seedEntry.get_text());
 	}
-	// TODO: actually set seed
 
 	newGameDialog.show_all();
 	newGameDialog.present();
@@ -141,7 +145,7 @@ void View::onTogglePlayerClicked(int playerNumber) {
 }
 
 void View::onStartNewGameButtonClicked() {
-	int seed = 0;
+	int seed = "" == seedEntry.get_text() ? 0 : std::stoi(seedEntry.get_text());
 	std::vector<PlayerType> types;
 	for (auto it = playerToggleButtons.begin(); it != playerToggleButtons.end(); ++it) {
 			PlayerType type = HUMAN;
@@ -152,6 +156,7 @@ void View::onStartNewGameButtonClicked() {
 	}
 
 	controller_->newGame(types, seed);
+	seedEntry.set_text("");
 	newGameDialog.hide();
 }
 
@@ -179,14 +184,28 @@ void View::update() {
 				setTableRow(model_->playArea(), static_cast<Suit>(s));
 			}
 
+			// Update player dashboard
+			currentPlayerLabel.set_label("Player " + std::to_string(model_->currPlayer()->number()) + "'s Turn");
+			currentScoreLabel.set_label("Score: " + std::to_string(model_->currPlayer()->score()));
+			currentDiscardsLabel.set_label("Discards: " + std::to_string(model_->currPlayer()->discard().size()));
+
 			// Update hand
 			int count = 0;
 			for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
 				handImages.at(count++)->set(deck.cardImage(**it));
 			}
+			for (; count < 13; ++count) {
+				handImages.at(count++)->set(deck.emptyImage());
+			}
+
+			// TODO: Show card last played? Clear error message for now
+			logMessage.set_label("");
+
 		} else {
 			// TODO: Handle error
 			std::cout << model_->error() << std::endl;
+			// TODO: error messages should be determined by the view
+			logMessage.set_label(model_->error());
 		}
 	}
 }
