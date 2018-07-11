@@ -29,8 +29,11 @@ class Model : public Subject {
     // The current seed used to shuffle the deck
     int seed_;
 
-    // Whether the types of the player objects are stale
-    bool should_set_player_types_;
+    // Whether a game is currently in progress
+    bool game_in_progress_;
+
+    // The current error, if it exists
+    std::string error_;
 
     // Initializes the internal deck representation
     void initDeck();
@@ -44,6 +47,12 @@ class Model : public Subject {
     // Deals the first 13 cards to player 1, second 13 cards to player 2, etc.
     void dealHands();
 
+    // Sets the types of the internal player representation to the passed types
+    void setPlayerTypes(const std::vector<PlayerType> & types);
+
+    // Advances curr_player_ to the next player
+    void advancePlayer();
+
 public:
     // The number of cards in the deck
     static const size_t CARD_COUNT;
@@ -54,19 +63,20 @@ public:
     // The number of cards in each player's hand
     static const size_t HAND_SIZE;
 
-    // The card which determines the player who should play first
-    static const Card STARTING_CARD;
+    // The error message shown if the player tries to discard with a legal play
+    static const std::string ERR_HAS_LEGAL_PLAY;
 
     Model();
 
-    const std::vector<std::unique_ptr<Player>> & getPlayers() const;
-    const Player * getCurrPlayer() const;
-    const SortedCardList & getPlayArea() const;
-    bool shouldSetPlayerTypes() const;
+    const std::vector<std::unique_ptr<Player>> & players() const;
+    const Player * currPlayer() const;
+    const SortedCardList & playArea() const;
+    bool gameInProgress() const;
+    std::string error() const;
 
-    void setPlayerTypes(const std::vector<PlayerType> & types);
-
-    void reset();
+    void newGame(const std::vector<PlayerType> & types, int seed = 0);
+    void playCard(const Card * c);
+    void clearError();
 
 }; // Model
 

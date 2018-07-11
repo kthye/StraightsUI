@@ -37,11 +37,15 @@ public:
 	// modifies: card_list
 	// ensures: Let i be first index such that card_list@pre[i] = args card
 	// for all valid k >= i, card_list[k] = card_list@pre[k+1]
-	// returns: if i found return card_list@pre[i] else return nullptr   
+	// returns: if i found return card_list@pre[i] else return nullptr
     const Card* removeCard(const Card& c);
 
-	// returns: if card_list is empty 
+	// returns: if card_list is empty
 	bool isEmpty() const;
+
+    // requires: c is a valid card from deck
+    // returns: true if the CardList contains c; false otherwise
+    bool contains(const Card * c) const;
 
 	// Spec fields: it_card is an iterator to a card in card_list or the end of card_list
 	class iterator {
@@ -51,7 +55,7 @@ public:
 		friend class CardList;
 	public:
 		// modifies: it_card
-		// ensures: it_card = it_card@pre + 1 
+		// ensures: it_card = it_card@pre + 1
 		// returns: it_card
 		iterator& operator++();
 

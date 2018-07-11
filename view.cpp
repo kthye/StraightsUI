@@ -149,13 +149,13 @@ bool View::onCardClick(GdkEventButton* eventButton) {
 }
 
 void View::update() {
-	setTableRow(model_->getPlayArea(), CLUB);
-	setTableRow(model_->getPlayArea(), DIAMOND);
-	setTableRow(model_->getPlayArea(), HEART);
-	setTableRow(model_->getPlayArea(), SPADE);
+	setTableRow(model_->playArea(), CLUB);
+	setTableRow(model_->playArea(), DIAMOND);
+	setTableRow(model_->playArea(), HEART);
+	setTableRow(model_->playArea(), SPADE);
 
 	int count = 0;
-	for (auto it = model_->getCurrPlayer()->hand().begin(); it != model_->getCurrPlayer()->hand().end(); ++it) {
+	for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
 		handImages.at(count++)->set(deck.cardImage(**it));
 	}
 }

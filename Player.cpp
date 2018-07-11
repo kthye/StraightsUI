@@ -26,3 +26,11 @@ void Player::setHand(CardList && hand) {
 void Player::setType(PlayerType type) {
     type_ = type;
 }
+
+void Player::removeFromHand(const Card * c) {
+    hand_.removeCard(*c);
+}
+
+void Player::addToDiscard(const Card * c) {
+    discard_.addCard(c);
+}

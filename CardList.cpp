@@ -42,6 +42,13 @@ bool CardList::isEmpty() const {
 	return pImpl_->cards_.empty();
 }
 
+bool CardList::contains(const Card * card) const {
+	for (const Card * c : pImpl_->cards_) {
+        if (c == card) return true;
+    }
+    return false;
+}
+
 CardList::iterator::iterator(std::vector<const Card *> &cards, int cardIndex) : cards_{ cards },
 	cardIndex_{ cardIndex } {}
 

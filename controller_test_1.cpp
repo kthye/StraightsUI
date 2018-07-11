@@ -12,6 +12,7 @@
 
 
 #include <iostream>
+#include <sstream>
 #include <assert.h>
 #include "model.h"
 #include "controller.h"
@@ -31,6 +32,7 @@ public:
 
     void assertSingleUpdate() {
         assert(update_count == 1);
+        update_count = 0;
     }
 };
 
@@ -43,18 +45,38 @@ int main( int argc, char * argv[] ) {
 
     cout << "Hello world!" << endl;
 
-    // Game should start with stale player types
-    assert(model.shouldSetPlayerTypes() == true);
+    // Game should not start in progress
+    assert(model.gameInProgress() == false);
 
-    // We update the player types
-    model.setPlayerTypes(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, HUMAN});
+    // Start a new game
+    model.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, HUMAN});
 
     t.assertSingleUpdate();
 
-    assert(model.getPlayers().at(0)->type() == HUMAN);
-    assert(model.getPlayers().at(1)->type() == COMPUTER);
-    assert(model.getPlayers().at(2)->type() == COMPUTER);
-    assert(model.getPlayers().at(3)->type() == HUMAN);
+    assert(model.players().at(0)->type() == HUMAN);
+    assert(model.players().at(1)->type() == COMPUTER);
+    assert(model.players().at(2)->type() == COMPUTER);
+    assert(model.players().at(3)->type() == HUMAN);
+
+    // Check the correct opening state of the game
+    stringstream hand;
+    for (const Card * c : model.currPlayer()->hand()) {
+        hand << *c << " ";
+    }
+    assert(hand.str() == "JH 6C 10S 4S 5D 3H 7S KS 7D JD 8H 4C 4D ");
+
+    // Play the 7S as you would expect
+    const Card * seven_spades = *(++++++++++++model.currPlayer()->hand().begin());
+    model.playCard(seven_spades);
+
+    t.assertSingleUpdate();
+
+    // Check that the card was played properly
+    hand.str("");
+    for (const Card * c : model.players().at(3)->hand()) {
+        hand << *c << " ";
+    }
+    assert(hand.str() == "JH 6C 10S 4S 5D 3H KS 7D JD 8H 4C 4D ");
 
 	return 0;
 } // main
