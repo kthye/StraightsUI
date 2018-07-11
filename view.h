@@ -16,6 +16,7 @@
 #include <gtkmm.h>
 #include <gtkmm/grid.h>
 #include <vector>
+#include <memory>
 #include "observer.h"
 #include "DeckGUI.h"
 #include "SortedCardList.h"
@@ -30,7 +31,6 @@ private:
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 	// Observer Pattern: to access Model accessors without having to downcast subject
 	Model *model_;
-
 	DeckGUI deck;
 
 	// Member widgets:
@@ -47,18 +47,18 @@ private:
 			Gtk::Button startNewGameButton;
 			Gtk::Button cancelButton;
 			Gtk::Label seedLabel;
-      std::vector<Gtk::Label*> playerLabels;
-      std::vector<Gtk::Button*> playerToggleButtons;
+      std::vector<std::unique_ptr<Gtk::Label>> playerLabels;
+      std::vector<std::unique_ptr<Gtk::Button>> playerToggleButtons;
 	Gtk::Grid table;
-		std::vector<std::vector<Gtk::Image*>> tableSlots;
+		std::vector<std::vector<std::unique_ptr<Gtk::Image>>> tableSlots;
 	Gtk::Grid playerDashboard;
 		Gtk::Label currentPlayerLabel;
 		Gtk::Label currentScoreLabel;
 		Gtk::Button rageButton;
 		Gtk::Label currentDiscardsLabel;
 	Gtk::HBox hand;
-		std::vector<Gtk::Image*>	handImages;
-		std::vector<Gtk::EventBox*> handBoxes;
+		std::vector<std::unique_ptr<Gtk::Image>> handImages;
+		std::vector<std::unique_ptr<Gtk::EventBox>> handBoxes;
 protected:
 	void onNewGameButtonClicked();
 	void onEndGameButtonClicked();
@@ -68,7 +68,7 @@ protected:
 	void onStartNewGameButtonClicked();
 	void onCancelButtonClicked();
 public:
-  View( Controller*, Model* );
+  View(Controller*, Model*);
   virtual ~View();
   virtual void update();	// Observer Pattern: concrete update() method
 };
