@@ -53,11 +53,6 @@ int main( int argc, char * argv[] ) {
 
     t.assertSingleUpdate();
 
-    assert(model.players().at(0)->type() == HUMAN);
-    assert(model.players().at(1)->type() == COMPUTER);
-    assert(model.players().at(2)->type() == COMPUTER);
-    assert(model.players().at(3)->type() == HUMAN);
-
     // Check the correct opening state of the game
     stringstream hand;
     for (const Card * c : model.currPlayer()->hand()) {

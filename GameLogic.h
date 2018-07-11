@@ -1,6 +1,8 @@
 #ifndef GAMELOGIC_H
 #define GAMELOGIC_H
 
+#include <cstddef>
+
 class SortedCardList;
 class Card;
 class CardList;
