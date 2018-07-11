@@ -38,6 +38,10 @@ const Card* CardList::removeCard(const Card& card) {
     return nullptr;
 }
 
+const Card* CardList::at(int index) const {
+  return pImpl_->cards_.at(index);
+}
+
 bool CardList::isEmpty() const {
 	return pImpl_->cards_.empty();
 }

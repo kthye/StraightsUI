@@ -16,14 +16,6 @@ Model::Model()
 : seed_{0}, game_in_progress_{false}, round_in_progress_{false} {
     initDeck();
     initPlayers();
-
-    /// FOR TESTING
-    play_area_.addCard(deck_.at(4).get());
-    play_area_.addCard(deck_.at(13).get());
-    play_area_.addCard(deck_.at(22).get());
-    play_area_.addCard(deck_.at(23).get());
-    play_area_.addCard(deck_.at(44).get());
-    /// END TESTING
 }
 
 const std::vector<std::unique_ptr<Player>> & Model::players() const {

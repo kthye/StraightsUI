@@ -40,6 +40,9 @@ public:
 	// returns: if i found return card_list@pre[i] else return nullptr
     const Card* removeCard(const Card& c);
 
+		// TODO: spec
+		const Card* at(int index) const;
+
 	// returns: if card_list is empty
 	bool isEmpty() const;
 

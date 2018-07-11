@@ -3,11 +3,12 @@
 #include "controller.h"
 #include "model.h"
 #include "subject.h"
+#include "Player.h"
 #include <iostream>
 
 const int BORDER_LEN = 10;
 
-View::View(Controller *c, Model *m) : model_(m), deck(), panels(false, BORDER_LEN), menuBar(true, BORDER_LEN),
+View::View(Controller *c, Model *m) : controller_(c), model_(m), deck(), panels(false, BORDER_LEN), menuBar(true, BORDER_LEN),
 newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), newGameDialog("Start New Game", true),
 labelBox(true, BORDER_LEN), playerBox(true, BORDER_LEN), startBox(true, BORDER_LEN), startNewGameButton("Start New Game"),
 cancelButton("Cancel"), seedLabel("Seed: 0"), table(), playerDashboard(), currentPlayerLabel("Player 1's Turn"),
@@ -96,17 +97,17 @@ hand(true, 10) {
 		Gtk::Image* image = new Gtk::Image(deck.emptyImage());
 		eventBox->add(*image);
 		eventBox->set_events(Gdk::BUTTON_PRESS_MASK);
-  	eventBox->signal_button_press_event().connect(sigc::mem_fun(*this, &View::onCardClick));
+  	eventBox->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onCardClick), i));
 		hand.add(*eventBox);
 		handBoxes.push_back(std::unique_ptr<Gtk::EventBox>(eventBox));
 		handImages.push_back(std::unique_ptr<Gtk::Image>(image));
 	}
 
-	// Update screen based on starting state
-	update();
-
 	// The final step is to display the buttons (they display themselves)
 	show_all();
+
+	// Update screen based on starting state
+	update();
 
 	// Register view as observer of model
 	model_->subscribe(this);
@@ -140,7 +141,17 @@ void View::onTogglePlayerClicked(int playerNumber) {
 }
 
 void View::onStartNewGameButtonClicked() {
-	// TODO: Initalize new game
+	int seed = 0;
+	std::vector<PlayerType> types;
+	for (auto it = playerToggleButtons.begin(); it != playerToggleButtons.end(); ++it) {
+			PlayerType type = HUMAN;
+			if ((*it)->get_label() == "Human") {
+				type = COMPUTER;
+			}
+			types.push_back(type);
+	}
+
+	controller_->newGame(types, seed);
 	newGameDialog.hide();
 }
 
@@ -148,8 +159,12 @@ void View::onCancelButtonClicked() {
 	newGameDialog.hide();
 }
 
-bool View::onCardClick(GdkEventButton* eventButton) {
+bool View::onCardClick(GdkEventButton* eventButton, unsigned int cardIndex) {
 	std::cout << "Card clicked!" << std::endl;
+	if (cardIndex < model_->HAND_SIZE) {
+		controller_->playCard(model_->currPlayer()->hand().at(cardIndex));
+	}
+
 	return true;
 }
 
@@ -170,7 +185,8 @@ void View::update() {
 				handImages.at(count++)->set(deck.cardImage(**it));
 			}
 		} else {
-			// TODO: display error message
+			// TODO: Handle error
+			std::cout << model_->error() << std::endl;
 		}
 	}
 }

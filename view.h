@@ -30,6 +30,7 @@ class View : public Gtk::Window, public Observer {
 private:
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 	// Observer Pattern: to access Model accessors without having to downcast subject
+	Controller* controller_;
 	Model *model_;
 	DeckGUI deck;
 
@@ -62,7 +63,7 @@ private:
 protected:
 	void onNewGameButtonClicked();
 	void onEndGameButtonClicked();
-	bool onCardClick(GdkEventButton* eventButton);
+	bool onCardClick(GdkEventButton* eventButton, unsigned int cardIndex);
 
 	void onTogglePlayerClicked(int playerNumber);
 	void onStartNewGameButtonClicked();

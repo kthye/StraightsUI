@@ -13,16 +13,15 @@
 #include "controller.h"
 #include "model.h"
 
-
 Controller::Controller(Model *m) : model_(m) {}
 
 
 void Controller::newGame(const std::vector<PlayerType> & types, int seed) {
-    model->newGame(types, seed);
+    model_->newGame(types, seed);
 }
 
 void Controller::playCard(const Card * c) {
-    model->playCard(c);
+    model_->playCard(c);
 }
 
 void Controller::playComputer() {

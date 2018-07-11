@@ -13,8 +13,9 @@
 #ifndef MVC_CONTROLLER_H
 #define MVC_CONTROLLER_H
 
-
 #include <gtkmm.h>
+#include "Card.h"
+#include "Player.h"
 
 class Model;
 enum PlayerType;
