@@ -107,8 +107,8 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 	// The final step is to display the buttons (they display themselves)
 	show_all();
 
-	// Update screen based on starting state
-	update();
+	// Start new game
+	onNewGameButtonClicked();
 
 	// Register view as observer of model
 	model_->subscribe(this);
@@ -171,17 +171,30 @@ bool View::onCardClick(GdkEventButton* eventButton, unsigned int cardIndex) {
 
 void View::update() {
 	if (!model_->gameInProgress()) {
-			// TODO: open the modal but do not let it be closed
-			onNewGameButtonClicked();
+		Gtk::MessageDialog gameOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
+          Gtk::BUTTONS_OK);
+		gameOverDialog.set_transient_for(*this);
+
+
+		gameOverDialog.set_secondary_text(
+			"Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
+			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
+			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
+			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
+		gameOverDialog.run();
+		gameOverDialog.close();
+		onNewGameButtonClicked();
 	} else if (!model_->roundInProgress()) {
 		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
           Gtk::BUTTONS_OK);
 		roundOverDialog.set_transient_for(*this);
-		roundOverDialog.set_secondary_text("Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
+		roundOverDialog.set_secondary_text(
+			"Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
 			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
 			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
 			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
 		roundOverDialog.run();
+		roundOverDialog.close();
 		controller_->newRound();
 	} else {
 		if (model_->error().empty()) {
