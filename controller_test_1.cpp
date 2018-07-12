@@ -111,89 +111,91 @@ int main( int argc, char * argv[] ) {
      * TEST 2
      */
 
-    // Model model2;
-    // Controller controller2( &model2 );
-    // Tester t2;
-    // model2.subscribe(&t2);
-    //
-    // controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 99);
-    //
-    // assert(!model2.roundInProgress());
-    // for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
-    //     for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
-    //         cout << (**cit) << " ";
-    //     }
-    //     cout << (*it)->score() << endl;
-    // }
-    //
-    // controller2.newRound();
-    //
-    // assert(!model2.roundInProgress());
-    // for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
-    //     for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
-    //         cout << (**cit) << " ";
-    //     }
-    //     cout << (*it)->score() << endl;
-    // }
-    //
-    // const std::vector<std::vector<const Player *>> & winners = model2.winners();
-    // size_t place = 1;
-    // for (auto bucket : winners) {
-    //     cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
-    //     for (auto p : bucket) {
-    //         cout << " " << p->number();
-    //     }
-    //     cout << endl;
-    //     ++place;
-    // }
-    //
-    // controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 12);
-    //
-    // assert(!model2.roundInProgress());
-    // for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
-    //     for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
-    //         cout << (**cit) << " ";
-    //     }
-    //     cout << (*it)->score() << endl;
-    // }
-    //
-    // controller2.newRound();
-    //
-    // assert(!model2.roundInProgress());
-    // for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
-    //     for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
-    //         cout << (**cit) << " ";
-    //     }
-    //     cout << (*it)->score() << endl;
-    // }
-    //
-    // const std::vector<std::vector<const Player *>> & winners2 = model2.winners();
-    // place = 1;
-    // for (auto bucket : winners2) {
-    //     cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
-    //     for (auto p : bucket) {
-    //         cout << " " << p->number();
-    //     }
-    //     cout << endl;
-    //     ++place;
-    // }
+    Model model2;
+    Controller controller2( &model2 );
+    Tester t2;
+    model2.subscribe(&t2);
+
+    controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 99);
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    controller2.newRound();
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    const std::vector<std::vector<const Player *>> & winners = model2.winners();
+    size_t place = 1;
+    for (auto bucket : winners) {
+        cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
+        for (auto p : bucket) {
+            cout << " " << p->number();
+        }
+        cout << endl;
+        ++place;
+    }
+
+    assert(!model2.gameInProgress());
+
+    controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 12);
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    controller2.newRound();
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    const std::vector<std::vector<const Player *>> & winners2 = model2.winners();
+    place = 1;
+    for (auto bucket : winners2) {
+        cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
+        for (auto p : bucket) {
+            cout << " " << p->number();
+        }
+        cout << endl;
+        ++place;
+    }
 
     /**
      * Test 3
      */
 
-    Model model;
-    Controller controller( &model );
-    Tester t;
-    model.subscribe(&t);
-
-    controller.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, COMPUTER});
-
-    controller.playCard(*model.currPlayer()->hand().begin());
-    controller.playCard(*(++++++++++++++model.currPlayer()->hand().begin()));
-    cout << "ragequitting" << model.currPlayer()->number() << endl;
-    controller.ragequit(model.currPlayer()->number());
-    cout << "ragequit done" << endl;
+    // Model model;
+    // Controller controller( &model );
+    // Tester t;
+    // model.subscribe(&t);
+    //
+    // controller.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, COMPUTER});
+    //
+    // controller.playCard(*model.currPlayer()->hand().begin());
+    // controller.playCard(*(++++++++++++++model.currPlayer()->hand().begin()));
+    // cout << "ragequitting" << model.currPlayer()->number() << endl;
+    // controller.ragequit(model.currPlayer()->number());
+    // cout << "ragequit done" << endl;
 
 
 	return 0;

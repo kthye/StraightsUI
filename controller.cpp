@@ -38,9 +38,11 @@ void Controller::ragequit(size_t number) {
 
 void Controller::update() {
     if (model_->roundInProgress() && GameLogic::isRoundOver(model_->players())) {
-        model_->endRound();
+        model_->updateScores();
         if (GameLogic::isGameOver(model_->players())) {
             model_->endGame();
+        } else {
+            model_->endRound();
         }
     } else if (model_->roundInProgress()) {
         model_->play(&play_controller_);

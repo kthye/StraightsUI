@@ -61,9 +61,6 @@ class Model : public Subject {
     // Calculates player scores and updates
     void calculatePlayerScores();
 
-    // Update player scores from their current discards
-    void updateScores();
-
     void setWinners();
 
     void clearScores();
@@ -97,6 +94,8 @@ public:
     void endGame();
     void newRound();
     void endRound();
+    // Update player scores from their current discards
+    void updateScores();
     void playCard(const Card * c);
     void clearError();
     void play(const PlayerVisitor * pv);
