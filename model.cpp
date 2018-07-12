@@ -64,7 +64,7 @@ void Model::newGame(const std::vector<PlayerType> & types, int seed) {
 void Model::endGame() {
     setWinners();
     game_in_progress_ = false;
-    notify();
+    endRound();
 }
 
 void Model::newRound() {
@@ -79,7 +79,6 @@ void Model::newRound() {
 }
 
 void Model::endRound() {
-    updateScores();
     round_in_progress_ = false;
     notify();
 }
