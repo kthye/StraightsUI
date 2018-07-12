@@ -29,7 +29,8 @@ class Model;
 class View : public Gtk::Window, public Observer {
 private:
 	void setTableRow(const SortedCardList &playArea, Suit suit);
-
+	void clearTable();
+	void clearHand();
 	// Observer Pattern: to access Model accessors without having to downcast subject
 	Controller* controller_;
 	Model *model_;
@@ -60,7 +61,7 @@ private:
 		Gtk::Label currentDiscardsLabel;
 	Gtk::HBox hand;
 		std::vector<std::unique_ptr<Gtk::Image>> handImages;
-		std::vector<std::unique_ptr<Gtk::EventBox>> handBoxes;
+		std::vector<std::unique_ptr<Gtk::Button>> handButtons;
 	Gtk::HBox logBox;
 		Gtk::Label logMessage;
 	// Gtk::MessageDialog roundOverDialog;
@@ -68,7 +69,7 @@ private:
 
 	void onNewGameButtonClicked();
 	void onEndGameButtonClicked();
-	bool onCardClick(GdkEventButton* eventButton, unsigned int cardIndex);
+	void onCardClick(unsigned int cardIndex);
 
 	void onTogglePlayerClicked(int playerNumber);
 	void onStartNewGameButtonClicked();

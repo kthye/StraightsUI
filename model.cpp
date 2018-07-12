@@ -149,7 +149,7 @@ void Model::dealHands() {
         CardList hand;
         for (size_t i = 0; i < HAND_SIZE; ++i) {
             hand.addCard((*deck_it).get());
-            if (**deck_it == GameLogic::STARTING_CARD) {
+              if (**deck_it == GameLogic::STARTING_CARD) {
                 curr_player_ = player_it;
             }
             ++deck_it;
@@ -163,7 +163,6 @@ void Model::advancePlayer() {
     if (curr_player_ == players_.end()) {
         curr_player_ = players_.begin();
     }
-    // curr_player_.play()
 }
 
 void Model::updateScores() {

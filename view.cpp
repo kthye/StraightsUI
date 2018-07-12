@@ -5,6 +5,7 @@
 #include "subject.h"
 #include "Player.h"
 #include <iostream>
+#include <gdkmm/rgba.h>
 
 const int BORDER_LEN = 10;
 
@@ -13,7 +14,7 @@ newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), ne
 labelBox(true, BORDER_LEN), playerBox(true, BORDER_LEN), startBox(true, BORDER_LEN), startNewGameButton("Start New Game"),
 cancelButton("Cancel"), seedLabel("Seed: 0"), table(), playerDashboard(), currentPlayerLabel("Player 1's Turn"),
 currentScoreLabel("Score: 0"), rageButton("f#$k!"), currentDiscardsLabel("Discards: 0"),
-hand(true, 10), logBox(true, 10), logMessage("")  {
+hand(true, 0), logBox(true, 10), logMessage("")  {
 
 	// Sets some properties of the window.
 	set_title("Straights");
@@ -67,7 +68,7 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 
 	// Define table spacing
 	table.set_row_spacing(BORDER_LEN);
-	table.set_column_spacing(BORDER_LEN);
+	table.set_column_homogeneous(true);
 
 	// Initialize placeholders to table
 	for (int y = 0; y < 4; y++) {
@@ -91,14 +92,25 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 
 	// Initialize placeholders to hand
 	for (int i = 0; i < 13; i++) {
-		handBoxes.push_back(std::unique_ptr<Gtk::EventBox>(new Gtk::EventBox()));
+		handButtons.push_back(std::unique_ptr<Gtk::Button>(new Gtk::Button()));
 		handImages.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
 
-		handBoxes.at(i)->add(*handImages.at(i));
-		handBoxes.at(i)->set_events(Gdk::BUTTON_PRESS_MASK);
-  	handBoxes.at(i)->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onCardClick), i));
-		hand.add(*handBoxes.at(i));
+		handButtons.at(i)->set_name("test");
+
+		handButtons.at(i)->set_image(*handImages.at(i));
+  	handButtons.at(i)->signal_clicked().connect(sigc::bind<unsigned int>(sigc::mem_fun(*this, &View::onCardClick), i));
+
+		hand.add(*handButtons.at(i));
 	}
+
+	// Initalize custom css
+	auto css = Gtk::CssProvider::create();
+	css->load_from_data(
+		"#LegalPlay {\
+		background-color: #FFFF00;\
+		background-image: none;\
+		box-shadow: none;}");
+		this->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	// Initialize an empty log box
 	logBox.set_halign(Gtk::ALIGN_END);
@@ -107,12 +119,11 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 	// The final step is to display the buttons (they display themselves)
 	show_all();
 
-	// Start new game
-	onNewGameButtonClicked();
-
 	// Register view as observer of model
 	model_->subscribe(this);
 
+	// Start new game
+	onNewGameButtonClicked();
 }
 
 View::~View() {}
@@ -125,6 +136,7 @@ void View::onNewGameButtonClicked() {
 	}
 
 	newGameDialog.show_all();
+	newGameDialog.set_keep_above(true);
 	newGameDialog.present();
 }
 
@@ -160,31 +172,38 @@ void View::onCancelButtonClicked() {
 	newGameDialog.hide();
 }
 
-bool View::onCardClick(GdkEventButton* eventButton, unsigned int cardIndex) {
+void View::onCardClick(unsigned int cardIndex) {
 	std::cout << "Card clicked!" << std::endl;
 	if (cardIndex < model_->currPlayer()->hand().size()) {
 		controller_->playCard(model_->currPlayer()->hand().at(cardIndex));
 	}
-
-	return true;
 }
 
 void View::update() {
 	if (!model_->gameInProgress()) {
-		Gtk::MessageDialog gameOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
+		std::string winnersText = "";
+		std::string results = "";
+
+		for (auto it = model_->winners().at(0).begin(); it != model_->winners().at(0).end(); ++it) {
+			winnersText += "Player " + std::to_string((*it)->number()) + " wins!";
+		}
+
+		Gtk::MessageDialog gameOverDialog(winnersText, true, Gtk::MESSAGE_QUESTION,
           Gtk::BUTTONS_OK);
 		gameOverDialog.set_transient_for(*this);
 
+		for (auto it = model_->winners().begin(); it != model_->winners().end(); ++it) {
+			for (auto it2 = it->begin(); it2 != it->end(); ++it2) {
+				results += 	"Player " + std::to_string((*it2)->number()) + " \t Score: " + std::to_string((*it2)->score()) + "\n";
+			}
+		}
 
-		gameOverDialog.set_secondary_text(
-			"Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
-			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
-			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
-			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
+		gameOverDialog.set_secondary_text(results);
 		gameOverDialog.run();
 		gameOverDialog.close();
-		onNewGameButtonClicked();
-	} else if (!model_->roundInProgress()) {
+	} else if (!model_->roundInProgress() && model_->gameInProgress()) {
+
+		// Display round over dialog
 		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
           Gtk::BUTTONS_OK);
 		roundOverDialog.set_transient_for(*this);
@@ -195,6 +214,10 @@ void View::update() {
 			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
 		roundOverDialog.run();
 		roundOverDialog.close();
+
+		// Initialize new round
+		clearTable();
+		clearHand();
 		controller_->newRound();
 	} else {
 		if (model_->error().empty()) {
@@ -226,6 +249,20 @@ void View::update() {
 			// TODO: error messages should be determined by the view
 			logMessage.set_label(model_->error());
 		}
+	}
+}
+
+void View::clearTable() {
+	for (auto it = tableSlots.begin(); it != tableSlots.end(); ++it) {
+		for (auto it2 = it->begin(); it2 != it->end(); ++it2) {
+			(*it2)->set(deck.emptyImage());
+		}
+	}
+}
+
+void View::clearHand() {
+	for (auto it = handImages.begin(); it != handImages.end(); ++it) {
+		(*it)->set(deck.emptyImage());
 	}
 }
 
