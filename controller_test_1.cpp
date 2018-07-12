@@ -36,6 +36,7 @@ public:
     }
 
     void assertUpdates(size_t n) {
+        cout << update_count << endl;
         assert(update_count == n);
         update_count = 0;
     }
@@ -106,6 +107,17 @@ int main( int argc, char * argv[] ) {
     controller.playCard(six_clubs);
     t.assertUpdates(2);
     assert(model.error().empty());
+
+    /**
+     * TEST 2
+     */
+    model = Model();
+    controller = Controller(&model);
+    model.subscribe(&t);
+
+    controller.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER});
+
+    t.assertUpdates(50);
 
 	return 0;
 } // main
