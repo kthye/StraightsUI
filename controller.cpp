@@ -23,6 +23,10 @@ void Controller::newGame(const std::vector<PlayerType> & types, int seed) {
     model_->newGame(types, seed);
 }
 
+void Controller::newRound() {
+    model_->newRound();
+}
+
 void Controller::playCard(const Card * c) {
     model_->clearError();
     model_->playCard(c);

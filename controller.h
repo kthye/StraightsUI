@@ -25,6 +25,7 @@ class Controller : public Observer {
 public:
    Controller( Model* );
    void newGame(const std::vector<PlayerType> & types, int seed = 0);
+   void newRound();
    void playCard(const Card * c);
 
    void update();

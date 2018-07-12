@@ -120,6 +120,20 @@ int main( int argc, char * argv[] ) {
     controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER});
 
     assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    controller2.newRound();
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        cout << (*it)->score() << " ";
+    }
+    cout << endl;
 
 	return 0;
 } // main
