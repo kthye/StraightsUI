@@ -151,9 +151,9 @@ void View::onStartNewGameButtonClicked() {
 			types.push_back(type);
 	}
 
-	controller_->newGame(types, seed);
 	seedEntry.set_text("");
 	newGameDialog.hide();
+	controller_->newGame(types, seed);
 }
 
 void View::onCancelButtonClicked() {
@@ -176,20 +176,13 @@ void View::update() {
 	} else if (!model_->roundInProgress()) {
 		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
           Gtk::BUTTONS_OK);
+		roundOverDialog.set_transient_for(*this);
 		roundOverDialog.set_secondary_text("Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
 			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
 			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
 			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
-		int result = roundOverDialog.run();
-		switch(result) {
-	    case Gtk::RESPONSE_OK:
-
-	    	// TODO: call something
-	    break;
-	    default:
-	    std::cout << "Unexpected button clicked." << std::endl;
-	    break;
-  	}
+		roundOverDialog.run();
+		controller_->newRound();
 	} else {
 		if (model_->error().empty()) {
 			// Update table
