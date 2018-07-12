@@ -52,14 +52,12 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 	seedBox.add(seedLabel);
 
 	for (unsigned int i = 1; i <= model_->PLAYER_COUNT; ++i) {
-		Gtk::Label* playerLabel = new Gtk::Label("Player " + std::to_string(i));
-		labelBox.add(*playerLabel);
-		playerLabels.push_back(std::unique_ptr<Gtk::Label>(playerLabel));
+		playerLabels.push_back(std::unique_ptr<Gtk::Label>(new Gtk::Label("Player " + std::to_string(i))));
+		labelBox.add(*playerLabels.at(i - 1));
 
-		Gtk::Button* playerButton = new Gtk::Button("Computer");
-		playerButton->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onTogglePlayerClicked), i));
-		playerBox.add(*playerButton);
-		playerToggleButtons.push_back(std::unique_ptr<Gtk::Button>(playerButton));
+		playerToggleButtons.push_back(std::unique_ptr<Gtk::Button>(new Gtk::Button("Computer")));
+		playerToggleButtons.at(i - 1)->signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onTogglePlayerClicked), i));
+		playerBox.add(*playerToggleButtons.at(i - 1));
 	}
 
 	cancelButton.signal_clicked().connect(sigc::mem_fun(*this, &View::onCancelButtonClicked));
@@ -75,9 +73,8 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 	for (int y = 0; y < 4; y++) {
 		std::vector<std::unique_ptr<Gtk::Image>> rows;
 		for (int x = 0; x < 13; x++) {
-			Gtk::Image* temp = new Gtk::Image(deck.emptyImage());
-			rows.push_back(std::unique_ptr<Gtk::Image>(temp));
-			table.attach(*temp, x, y, temp->get_width(), temp->get_height());
+			rows.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
+			table.attach(*rows.at(x), x, y, rows.at(x)->get_width(), rows.at(x)->get_height());
 		}
 		tableSlots.push_back(std::move(rows));
 	}
@@ -94,14 +91,13 @@ hand(true, 10), logBox(true, 10), logMessage("")  {
 
 	// Initialize placeholders to hand
 	for (int i = 0; i < 13; i++) {
-		Gtk::EventBox* eventBox = new Gtk::EventBox();
-		Gtk::Image* image = new Gtk::Image(deck.emptyImage());
-		eventBox->add(*image);
-		eventBox->set_events(Gdk::BUTTON_PRESS_MASK);
-  	eventBox->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onCardClick), i));
-		hand.add(*eventBox);
-		handBoxes.push_back(std::unique_ptr<Gtk::EventBox>(eventBox));
-		handImages.push_back(std::unique_ptr<Gtk::Image>(image));
+		handBoxes.push_back(std::unique_ptr<Gtk::EventBox>(new Gtk::EventBox()));
+		handImages.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
+
+		handBoxes.at(i)->add(*handImages.at(i));
+		handBoxes.at(i)->set_events(Gdk::BUTTON_PRESS_MASK);
+  	handBoxes.at(i)->signal_button_press_event().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::onCardClick), i));
+		hand.add(*handBoxes.at(i));
 	}
 
 	// Initialize an empty log box
@@ -166,7 +162,7 @@ void View::onCancelButtonClicked() {
 
 bool View::onCardClick(GdkEventButton* eventButton, unsigned int cardIndex) {
 	std::cout << "Card clicked!" << std::endl;
-	if (cardIndex < model_->HAND_SIZE) {
+	if (cardIndex < model_->currPlayer()->hand().size()) {
 		controller_->playCard(model_->currPlayer()->hand().at(cardIndex));
 	}
 
@@ -177,6 +173,23 @@ void View::update() {
 	if (!model_->gameInProgress()) {
 			// TODO: open the modal but do not let it be closed
 			onNewGameButtonClicked();
+	} else if (!model_->roundInProgress()) {
+		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
+          Gtk::BUTTONS_OK);
+		roundOverDialog.set_secondary_text("Player 1 \t Score: " + std::to_string(model_->players().at(0)->score()) + "\n" +
+			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
+			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
+			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
+		int result = roundOverDialog.run();
+		switch(result) {
+	    case Gtk::RESPONSE_OK:
+
+	    	// TODO: call something
+	    break;
+	    default:
+	    std::cout << "Unexpected button clicked." << std::endl;
+	    break;
+  	}
 	} else {
 		if (model_->error().empty()) {
 			// Update table

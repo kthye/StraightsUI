@@ -63,6 +63,8 @@ private:
 		std::vector<std::unique_ptr<Gtk::EventBox>> handBoxes;
 	Gtk::HBox logBox;
 		Gtk::Label logMessage;
+	// Gtk::MessageDialog roundOverDialog;
+		// Gtk::ConfirmButton;
 
 	void onNewGameButtonClicked();
 	void onEndGameButtonClicked();
