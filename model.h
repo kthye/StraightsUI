@@ -29,6 +29,8 @@ class Model : public Subject {
     // Stores the cards that have been played
     SortedCardList play_area_;
 
+    std::vector<std::vector<const Player *>> winners_;
+
     // The current seed used to shuffle the deck
     int seed_;
 
@@ -53,9 +55,6 @@ class Model : public Subject {
     // Deals the first 13 cards to player 1, second 13 cards to player 2, etc.
     void dealHands();
 
-    // Resets all players' scores to 0
-    void resetPlayerScores();
-
     // Advances curr_player_ to the next player
     void advancePlayer();
 
@@ -64,6 +63,12 @@ class Model : public Subject {
 
     // Update player scores from their current discards
     void updateScores();
+
+    void setWinners();
+
+    void clearScores();
+
+    void clearWinners();
 
 public:
     // The number of cards in the deck
@@ -86,8 +91,10 @@ public:
     bool gameInProgress() const;
     bool roundInProgress() const;
     std::string error() const;
+    const std::vector<std::vector<const Player *>> & winners() const;
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);
+    void endGame();
     void newRound();
     void endRound();
     void playCard(const Card * c);

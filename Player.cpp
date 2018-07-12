@@ -43,3 +43,7 @@ void Player::incrementScore(int score) {
 void Player::resetScore() {
     score_ = 0;
 }
+
+void Player::clearDiscard() {
+    discard_.clear();
+}

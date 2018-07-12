@@ -36,14 +36,13 @@ public:
     }
 
     void assertUpdates(size_t n) {
-        cout << update_count << endl;
         assert(update_count == n);
         update_count = 0;
     }
 };
 
 int main( int argc, char * argv[] ) {
-
+/*
 	Model model;
     Controller controller( &model );
     Tester t;
@@ -57,7 +56,7 @@ int main( int argc, char * argv[] ) {
     // Start a new game
     controller.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, HUMAN});
 
-    // t.assertSingleUpdate();
+    t.assertSingleUpdate();
 
     // Check the correct opening state of the game
     stringstream hand;
@@ -70,7 +69,7 @@ int main( int argc, char * argv[] ) {
     const Card * seven_spades = *(++++++++++++model.currPlayer()->hand().begin());
     controller.playCard(seven_spades);
 
-    // t.assertUpdates(2);
+    t.assertUpdates(2);
 
     // Check that the card was played properly
     hand.str("");
@@ -91,7 +90,7 @@ int main( int argc, char * argv[] ) {
     assert(hand.str() == "5H 2S 9H 8D AD JS QD 8C 6H JC 10D KC ");
 
     // We now expect 2 computer turns
-    // t.assertUpdates(4);
+    t.assertUpdates(4);
     assert(**model.playArea().clubs_begin() == Card(CLUB, SEVEN));
     assert(**model.playArea().spades_begin() == Card(SPADE, SIX));
     assert(**(++model.playArea().spades_begin()) == Card(SPADE, SEVEN));
@@ -99,14 +98,14 @@ int main( int argc, char * argv[] ) {
     // Try an illegal play
     const Card * jack_hearts = *model.currPlayer()->hand().begin();
     controller.playCard(jack_hearts);
-    // t.assertUpdates(2);
+    t.assertUpdates(2);
     assert(model.error() == "You have a legal play. You may not discard.");
 
     // Now play a legal card
     const Card * six_clubs = *(++model.currPlayer()->hand().begin());
     controller.playCard(six_clubs);
-    // t.assertUpdates(2);
-    assert(model.error().empty());
+    t.assertUpdates(2);
+    assert(model.error().empty());*/
 
     /**
      * TEST 2
@@ -117,7 +116,7 @@ int main( int argc, char * argv[] ) {
     Tester t2;
     model2.subscribe(&t2);
 
-    controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER});
+    controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 99);
 
     assert(!model2.roundInProgress());
     for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
@@ -131,9 +130,22 @@ int main( int argc, char * argv[] ) {
 
     assert(!model2.roundInProgress());
     for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
-        cout << (*it)->score() << " ";
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
     }
-    cout << endl;
+
+    const std::vector<std::vector<const Player *>> & winners = model2.winners();
+    size_t place = 1;
+    for (auto bucket : winners) {
+        cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
+        for (auto p : bucket) {
+            cout << " " << p->number();
+        }
+        cout << endl;
+        ++place;
+    }
 
 	return 0;
 } // main

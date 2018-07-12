@@ -7,6 +7,7 @@
 #include "Player.h"
 
 const Card GameLogic::STARTING_CARD = Card(SPADE, SEVEN);
+const size_t GameLogic::MAX_SCORE = 80;
 
 CardList GameLogic::getLegalPlays(const SortedCardList& playArea, const CardList& hand) {
 	CardList legalPlays;
@@ -52,4 +53,13 @@ bool GameLogic::isRoundOver(const std::vector<std::unique_ptr<Player>> & players
         }
     }
     return true;
+}
+
+bool GameLogic::isGameOver(const std::vector<std::unique_ptr<Player>> & players) {
+    for (auto it = players.begin(); it != players.end(); ++it) {
+        if ((*it)->score() >= MAX_SCORE) {
+            return true;
+        }
+    }
+    return false;
 }

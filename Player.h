@@ -37,7 +37,7 @@ public:
     void addToDiscard(const Card * c);
     void incrementScore(int score);
     void resetScore();
-    void playCard(const Card * c);
+    void clearDiscard();
 
     virtual void play(const PlayerVisitor * pv) = 0;
 };

@@ -33,9 +33,12 @@ void Controller::playCard(const Card * c) {
 }
 
 void Controller::update() {
-    if (GameLogic::isRoundOver(model_->players())) {
+    if (model_->roundInProgress() && GameLogic::isRoundOver(model_->players())) {
         model_->endRound();
-    } else {
+        if (GameLogic::isGameOver(model_->players())) {
+            model_->endGame();
+        }
+    } else if (model_->roundInProgress()) {
         model_->play(&play_controller_);
     }
 }

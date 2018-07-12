@@ -3,12 +3,16 @@
  */
 
 #include <random>
+#include <algorithm>
 #include "model.h"
 #include "Card.h"
 #include "GameLogic.h"
 #include "PlayController.h"
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
+
+#include <iostream>
+using namespace std;
 
 const size_t Model::CARD_COUNT = 52;
 const size_t Model::PLAYER_COUNT = 4;
@@ -44,17 +48,28 @@ std::string Model::error() const {
     return error_;
 }
 
+const std::vector<std::vector<const Player *>> & Model::winners() const {
+    return winners_;
+}
+
 void Model::newGame(const std::vector<PlayerType> & types, int seed) {
     initPlayers(types);
     seed_ = seed;
-    shuffleDeck();
-    dealHands();
     game_in_progress_ = true;
-    round_in_progress_ = true;
+    newRound();
+}
+
+void Model::endGame() {
+    setWinners();
+    game_in_progress_ = false;
     notify();
 }
 
 void Model::newRound() {
+    play_area_.clear();
+    for (auto it = players_.begin(); it != players_.end(); ++it) {
+        (*it)->clearDiscard();
+    }
     shuffleDeck();
     dealHands();
     round_in_progress_ = true;
@@ -64,6 +79,7 @@ void Model::newRound() {
 void Model::endRound() {
     updateScores();
     round_in_progress_ = false;
+    notify();
 }
 
 // Require that c points to element in deck
@@ -72,12 +88,14 @@ void Model::playCard(const Card * c) {
     if (legal_plays.contains(c)) {
         (*curr_player_)->removeFromHand(c);
         play_area_.addCard(c);
+        cout << "Player " << (*curr_player_)->number() << " plays " << *c << endl;
         advancePlayer();
     } else if (!legal_plays.isEmpty()) {
         error_ = ERR_HAS_LEGAL_PLAY;
     } else {
         (*curr_player_)->removeFromHand(c);
         (*curr_player_)->addToDiscard(c);
+        cout << "Player " << (*curr_player_)->number() << " discards " << *c << endl;
         advancePlayer();
     }
     notify();
@@ -138,12 +156,6 @@ void Model::dealHands() {
     }
 }
 
-void Model::resetPlayerScores() {
-    for (auto it = players_.begin(); it != players_.end(); ++it) {
-        (*it)->resetScore();
-    }
-}
-
 void Model::advancePlayer() {
     ++curr_player_;
     if (curr_player_ == players_.end()) {
@@ -153,8 +165,47 @@ void Model::advancePlayer() {
 }
 
 void Model::updateScores() {
+    cout << "updatescores called" << endl;
     for (auto it = players_.begin(); it != players_.end(); ++it) {
         size_t score_gained = GameLogic::calculateScore((*it)->discard());
         (*it)->incrementScore(score_gained);
     }
+}
+
+struct winners_ascending
+{
+    inline bool operator() (const std::vector<const Player *> & v1, const std::vector<const Player *> & v2)
+    {
+        return (v1.at(0)->score() < v2.at(0)->score());
+    }
+};
+
+// requires: winners should have been cleared
+void Model::setWinners() {
+    // put players into score buckets
+    for (auto pit = players_.begin(); pit != players_.end(); ++pit) {
+        std::vector<std::vector<const Player *>>::iterator bit;
+        for (bit = winners_.begin(); bit != winners_.end(); ++bit) {
+            if ((*bit).at(0)->score() == (*pit)->score()) {
+                (*bit).push_back((*pit).get());
+                break;
+            }
+        }
+        if (bit == winners_.end()) {
+            winners_.push_back(std::vector<const Player *> { (*pit).get() });
+        }
+    }
+
+    // sort by score
+    std::sort(winners_.begin(), winners_.end(), winners_ascending());
+}
+
+void Model::clearScores() {
+    for (auto it = players_.begin(); it != players_.end(); ++it) {
+        (*it)->resetScore();
+    }
+}
+
+void Model::clearWinners() {
+    winners_.clear();
 }
