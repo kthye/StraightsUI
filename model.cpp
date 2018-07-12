@@ -40,7 +40,6 @@ bool Model::roundInProgress() const {
     return round_in_progress_;
 }
 
->>>>>>> Stashed changes
 std::string Model::error() const {
     return error_;
 }
