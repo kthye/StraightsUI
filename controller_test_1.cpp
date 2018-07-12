@@ -147,5 +147,36 @@ int main( int argc, char * argv[] ) {
         ++place;
     }
 
+    controller2.newGame(std::vector<PlayerType> {COMPUTER, COMPUTER, COMPUTER, COMPUTER}, 12);
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    controller2.newRound();
+
+    assert(!model2.roundInProgress());
+    for (auto it = model2.players().begin(); it != model2.players().end(); ++it) {
+        for (auto cit = (*it)->discard().begin(); cit != (*it)->discard().end(); ++cit) {
+            cout << (**cit) << " ";
+        }
+        cout << (*it)->score() << endl;
+    }
+
+    const std::vector<std::vector<const Player *>> & winners2 = model2.winners();
+    place = 1;
+    for (auto bucket : winners2) {
+        cout << "Place " << place << " (" << bucket.at(0)->score() << " points), players:";
+        for (auto p : bucket) {
+            cout << " " << p->number();
+        }
+        cout << endl;
+        ++place;
+    }
+
 	return 0;
 } // main

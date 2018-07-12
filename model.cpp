@@ -53,6 +53,8 @@ const std::vector<std::vector<const Player *>> & Model::winners() const {
 }
 
 void Model::newGame(const std::vector<PlayerType> & types, int seed) {
+    players_.clear();
+    winners_.clear();
     initPlayers(types);
     seed_ = seed;
     game_in_progress_ = true;
