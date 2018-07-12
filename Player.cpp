@@ -20,6 +20,10 @@ size_t Player::number() const {
     return number_;
 }
 
+bool Player::isHandEmpty() const {
+    return hand_.isEmpty();
+}
+
 void Player::setHand(CardList && hand) {
     hand_ = std::move(hand);
 }
@@ -32,7 +36,7 @@ void Player::addToDiscard(const Card * c) {
     discard_.addCard(c);
 }
 
-void Player::incramentScore(int score) {
+void Player::incrementScore(int score) {
   score_ += score;
 }
 

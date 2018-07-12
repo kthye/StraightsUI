@@ -12,6 +12,7 @@
 
 #include "controller.h"
 #include "model.h"
+#include "GameLogic.h"
 
 Controller::Controller(Model *m) : play_controller_{m}, model_(m) {
     model_->subscribe(this);
@@ -28,5 +29,9 @@ void Controller::playCard(const Card * c) {
 }
 
 void Controller::update() {
-    model_->play(play_controller_);
+    if (GameLogic::isRoundOver(model_->players())) {
+        model_->endRound();
+    } else {
+        model_->play(play_controller_);
+    }
 }

@@ -18,11 +18,12 @@
 #include "controller.h"
 #include "observer.h"
 #include "Player.h"
+#include "Card.h"
 
 using namespace std;
 
 class Tester : public Observer {
-    int update_count;
+    size_t update_count;
 public:
     Tester() : update_count{0} {}
 
@@ -31,7 +32,11 @@ public:
     }
 
     void assertSingleUpdate() {
-        assert(update_count == 1);
+        assertUpdates(1);
+    }
+
+    void assertUpdates(size_t n) {
+        assert(update_count == n);
         update_count = 0;
     }
 };
@@ -49,7 +54,7 @@ int main( int argc, char * argv[] ) {
     assert(model.gameInProgress() == false);
 
     // Start a new game
-    model.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, HUMAN});
+    controller.newGame(std::vector<PlayerType> {HUMAN, COMPUTER, COMPUTER, HUMAN});
 
     t.assertSingleUpdate();
 
@@ -62,9 +67,9 @@ int main( int argc, char * argv[] ) {
 
     // Play the 7S as you would expect
     const Card * seven_spades = *(++++++++++++model.currPlayer()->hand().begin());
-    model.playCard(seven_spades);
+    controller.playCard(seven_spades);
 
-    t.assertSingleUpdate();
+    t.assertUpdates(2);
 
     // Check that the card was played properly
     hand.str("");
@@ -72,6 +77,35 @@ int main( int argc, char * argv[] ) {
         hand << *c << " ";
     }
     assert(hand.str() == "JH 6C 10S 4S 5D 3H KS 7D JD 8H 4C 4D ");
+
+    // Discard the 9C
+    const Card * nine_clubs = *model.currPlayer()->hand().begin();
+    controller.playCard(nine_clubs);
+
+    // Check that the card was played properly
+    hand.str("");
+    for (const Card * c : model.players().at(0)->hand()) {
+        hand << *c << " ";
+    }
+    assert(hand.str() == "5H 2S 9H 8D AD JS QD 8C 6H JC 10D KC ");
+
+    // We now expect 2 computer turns
+    t.assertUpdates(4);
+    assert(**model.playArea().clubs_begin() == Card(CLUB, SEVEN));
+    assert(**model.playArea().spades_begin() == Card(SPADE, SIX));
+    assert(**(++model.playArea().spades_begin()) == Card(SPADE, SEVEN));
+
+    // Try an illegal play
+    const Card * jack_hearts = *model.currPlayer()->hand().begin();
+    controller.playCard(jack_hearts);
+    t.assertUpdates(2);
+    assert(model.error() == "You have a legal play. You may not discard.");
+
+    // Now play a legal card
+    const Card * six_clubs = *(++model.currPlayer()->hand().begin());
+    controller.playCard(six_clubs);
+    t.assertUpdates(2);
+    assert(model.error().empty());
 
 	return 0;
 } // main

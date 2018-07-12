@@ -62,6 +62,9 @@ class Model : public Subject {
     // Calculates player scores and updates
     void calculatePlayerScores();
 
+    // Update player scores from their current discards
+    void updateScores();
+
 public:
     // The number of cards in the deck
     static const size_t CARD_COUNT;
@@ -86,6 +89,7 @@ public:
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);
     void newRound();
+    void endRound();
     void playCard(const Card * c);
     void clearError();
     void play(const PlayController & pc);

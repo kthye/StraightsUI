@@ -30,11 +30,12 @@ public:
     const CardList & discard() const;
     size_t score() const;
     size_t number() const;
+    bool isHandEmpty() const;
 
     void setHand(CardList && hand);
     void removeFromHand(const Card * c);
     void addToDiscard(const Card * c);
-    void incramentScore(int score);
+    void incrementScore(int score);
     void resetScore();
     void playCard(const Card * c);
 

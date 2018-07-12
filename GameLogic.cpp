@@ -1,8 +1,10 @@
 #include <cstddef>
+#include <memory>
 #include "GameLogic.h"
 #include "Card.h"
 #include "SortedCardList.h"
 #include "CardList.h"
+#include "Player.h"
 
 const Card GameLogic::STARTING_CARD = Card(SPADE, SEVEN);
 
@@ -41,4 +43,13 @@ size_t GameLogic::calculateScore(const CardList& discard) {
         score += (*it)->getRank() + 1;
 	}
 	return score;
+}
+
+bool GameLogic::isRoundOver(const std::vector<std::unique_ptr<Player>> & players) {
+    for (auto it = players.begin(); it != players.end(); ++it) {
+        if (!(*it)->isHandEmpty()) {
+            return false;
+        }
+    }
+    return true;
 }

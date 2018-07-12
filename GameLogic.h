@@ -2,10 +2,13 @@
 #define GAMELOGIC_H
 
 #include <cstddef>
+#include <vector>
+#include <memory>
 
 class SortedCardList;
 class Card;
 class CardList;
+class Player;
 
 class GameLogic final {
     // Checks if a given card can be played given the current state of the playArea
@@ -21,6 +24,8 @@ public:
 
     // returns: the score of the given discard
     static size_t calculateScore(const CardList& discard);
+
+    static bool isRoundOver(const std::vector<std::unique_ptr<Player>> & players);
 };
 
 #endif

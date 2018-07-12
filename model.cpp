@@ -36,10 +36,6 @@ bool Model::gameInProgress() const {
     return game_in_progress_;
 }
 
-bool Model::roundInProgress() const {
-  return round_in_progress_;
-}
-
 std::string Model::error() const {
     return error_;
 }
@@ -59,6 +55,11 @@ void Model::newRound() {
     dealHands();
     round_in_progress_ = true;
     notify();
+}
+
+void Model::endRound() {
+    updateScores();
+    round_in_progress_ = false;
 }
 
 // Require that c points to element in deck
@@ -139,20 +140,17 @@ void Model::resetPlayerScores() {
     }
 }
 
-void Model::calculatePlayerScores() {
-  for (auto it = players_.begin(); it != players_.end(); ++it) {
-    (*it)->incramentScore(GameLogic::calculateScore((*it)->discard()));
-  }
-}
-
 void Model::advancePlayer() {
     ++curr_player_;
     if (curr_player_ == players_.end()) {
         curr_player_ = players_.begin();
     }
+    // curr_player_.play()
+}
 
-    if ((*curr_player_)->hand().isEmpty()) {
-      calculatePlayerScores();
-      round_in_progress_ = false;
+void Model::updateScores() {
+    for (auto it = players_.begin(); it != players_.end(); ++it) {
+        size_t score_gained = GameLogic::calculateScore((*it)->discard());
+        (*it)->incrementScore(score_gained);
     }
 }
