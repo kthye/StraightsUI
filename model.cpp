@@ -36,6 +36,11 @@ bool Model::gameInProgress() const {
     return game_in_progress_;
 }
 
+bool Model::roundInProgress() const {
+    return round_in_progress_;
+}
+
+
 std::string Model::error() const {
     return error_;
 }
@@ -79,8 +84,8 @@ void Model::playCard(const Card * c) {
     notify();
 }
 
-void Model::play(const PlayController & pc) {
-    (*curr_player_)->play(pc);
+void Model::play(const PlayerVisitor * pv) {
+    (*curr_player_)->play(pv);
 }
 
 void Model::clearError() {

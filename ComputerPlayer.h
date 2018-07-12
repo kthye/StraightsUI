@@ -17,7 +17,7 @@ public:
     // Note that, like Player, ComputerPlayer doesn't own any heap-allocated memory
     ~ComputerPlayer();
 
-    void play(const PlayController & pc);
+    void play(const PlayerVisitor * pv) override;
 };
 
 #endif

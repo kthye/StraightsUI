@@ -13,8 +13,8 @@ class PlayController : public PlayerVisitor {
 public:
     PlayController(Model * model);
 
-    void visitPlayer(const HumanPlayer & hp) const;
-    void visitPlayer(const ComputerPlayer & cp) const;
+    void visitPlayer(const HumanPlayer & hp) const override;
+    void visitPlayer(const ComputerPlayer & cp) const override;
 };
 
 #endif

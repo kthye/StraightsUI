@@ -92,7 +92,7 @@ public:
     void endRound();
     void playCard(const Card * c);
     void clearError();
-    void play(const PlayController & pc);
+    void play(const PlayerVisitor * pv);
 
 }; // Model
 

@@ -4,10 +4,11 @@
 #include "CardList.h"
 #include "ComputerPlayer.h"
 
+
 PlayController::PlayController(Model * model) : model_{model} {}
 
 void PlayController::visitPlayer(const HumanPlayer & hp) const {
-    // Wait for view to call model.playCard
+    // Wait for view to call mode_->playCard()
 }
 
 void PlayController::visitPlayer(const ComputerPlayer & cp) const {

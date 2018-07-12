@@ -3,7 +3,7 @@
 
 #include "CardList.h"
 
-class PlayController;
+class PlayerVisitor;
 
 class Player {
     // Spec fields
@@ -39,7 +39,7 @@ public:
     void resetScore();
     void playCard(const Card * c);
 
-    virtual void play(const PlayController & pc) = 0;
+    virtual void play(const PlayerVisitor * pv) = 0;
 };
 
 #endif

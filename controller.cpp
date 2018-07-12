@@ -32,6 +32,6 @@ void Controller::update() {
     if (GameLogic::isRoundOver(model_->players())) {
         model_->endRound();
     } else {
-        model_->play(play_controller_);
+        model_->play(&play_controller_);
     }
 }
