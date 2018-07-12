@@ -27,8 +27,9 @@ public:
    void newGame(const std::vector<PlayerType> & types, int seed = 0);
    void newRound();
    void playCard(const Card * c);
+   void ragequit(size_t number);
 
-   void update();
+   void update() override;
 private:
    Model *model_;
 }; // Controller

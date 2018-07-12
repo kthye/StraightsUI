@@ -32,6 +32,10 @@ void Controller::playCard(const Card * c) {
     model_->playCard(c);
 }
 
+void Controller::ragequit(size_t number) {
+    model_->ragequit(number);
+}
+
 void Controller::update() {
     if (model_->roundInProgress() && GameLogic::isRoundOver(model_->players())) {
         model_->endRound();

@@ -100,6 +100,7 @@ public:
     void playCard(const Card * c);
     void clearError();
     void play(const PlayerVisitor * pv);
+    void ragequit(size_t number);
 
 }; // Model
 

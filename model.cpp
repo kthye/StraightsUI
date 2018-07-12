@@ -211,3 +211,8 @@ void Model::clearScores() {
 void Model::clearWinners() {
     winners_.clear();
 }
+
+void Model::ragequit(size_t number) {
+    players_.at(number - 1) = std::unique_ptr<Player>(new ComputerPlayer(std::move(*players_.at(number - 1))));
+    notify();
+}
