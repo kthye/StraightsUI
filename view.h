@@ -28,21 +28,22 @@ class Model;
 
 class View : public Gtk::Window, public Observer {
 private:
-	void setTableRow(const SortedCardList &playArea, Suit suit);
-	void clearTable();
-	void clearHand();
-	// Observer Pattern: to access Model accessors without having to downcast subject
+	// View needs an instance of the controller for its buttons to invoke
 	Controller* controller_;
-	Model *model_;
-	DeckGUI deck;
 
-	// Member widgets:
+	// View also needs an instance of the concrete subject it is observing
+	Model *model_;
+
+	// ADT containing all the Pixel Buffers of cards
+	DeckGUI deck_;
+
+	// Class for all the widgets on this window
 	Gtk::VBox panels;
 	Gtk::HBox menuBar;
 		Gtk::Button newGameButton;
 		Gtk::Entry seedEntry;
 		Gtk::Button endGameButton;
-    Gtk::Dialog newGameDialog;
+		Gtk::Dialog newGameDialog;
 			Gtk::HBox seedBox;
 			Gtk::HBox labelBox;
 			Gtk::HBox playerBox;
@@ -50,31 +51,55 @@ private:
 			Gtk::Button startNewGameButton;
 			Gtk::Button cancelButton;
 			Gtk::Label seedLabel;
-      std::vector<std::unique_ptr<Gtk::Label>> playerLabels;
-      std::vector<std::unique_ptr<Gtk::Button>> playerToggleButtons;
+			std::vector<std::unique_ptr<Gtk::Label>> playerLabels;
+			std::vector<std::unique_ptr<Gtk::Button>> playerToggleButtons;
 	Gtk::Grid table;
 		std::vector<std::vector<std::unique_ptr<Gtk::Image>>> tableSlots;
-	Gtk::Grid playerDashboard;
-		Gtk::Label currentPlayerLabel;
-		Gtk::Label currentScoreLabel;
-		Gtk::Button rageButton;
-		Gtk::Label currentDiscardsLabel;
+	Gtk::Frame dashboardFrame_;
+	Gtk::Grid dashboardGrid_;
+		Gtk::Button dashboardHintButton_;
+		Gtk::Label dashboardScoreLabel_;
+		Gtk::Button dashboardRageButton_;
+		Gtk::Label dashboardDiscardsLabel_;
 	Gtk::HBox hand;
 		std::vector<std::unique_ptr<Gtk::Image>> handImages;
 		std::vector<std::unique_ptr<Gtk::Button>> handButtons;
 	Gtk::HBox logBox;
-		Gtk::Label logMessage;
-	// Gtk::MessageDialog roundOverDialog;
-		// Gtk::ConfirmButton;
+		Gtk::Label logLabel_;
 
+	// Invoked when new game button is pressed
 	void onNewGameButtonClicked();
+
+	// Invoked when end game button is pressed
 	void onEndGameButtonClicked();
+
+	// Invoked when any cards in the hand are clicked
 	void onCardClick(unsigned int cardIndex);
+
+	// Invoked when the hint button is pressed
+	void onHintButtonClicked();
+
+	// Invoked when the rage button is pressed
 	void onRageButtonClicked();
 
+	// Invoked from new game dialog when a player is toggled
 	void onTogglePlayerClicked(int playerNumber);
+
+	// Invoked from new game dialog when start new game button is pressed
 	void onStartNewGameButtonClicked();
+
+	// Invoked from new game dialog when cancel button is clicked
 	void onCancelButtonClicked();
+
+	// Initializes widgets for new game
+	void setNewGame();
+
+	// Initializes widgets for new round
+	void setNewRound();
+
+	// Sets
+	void setTableRow(const SortedCardList &playArea, Suit suit);
+
 public:
   View(Controller*, Model*);
   virtual ~View();

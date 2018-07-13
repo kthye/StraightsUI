@@ -41,7 +41,7 @@ class Model : public Subject {
     bool round_in_progress_;
 
     // The current error, if it exists
-    std::string error_;
+    bool error_;
 
     // Initializes the internal deck representation
     void initDeck();
@@ -87,7 +87,8 @@ public:
     const SortedCardList & playArea() const;
     bool gameInProgress() const;
     bool roundInProgress() const;
-    std::string error() const;
+    bool error() const;
+
     const std::vector<std::vector<const Player *>> & winners() const;
     CardList legalPlays();
 

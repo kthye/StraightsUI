@@ -8,13 +8,14 @@
 #include <gdkmm/rgba.h>
 
 const int BORDER_LEN = 10;
+const std::string ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
 
-View::View(Controller *c, Model *m) : controller_(c), model_(m), deck(), panels(false, BORDER_LEN), menuBar(true, BORDER_LEN),
+View::View(Controller *c, Model *m) : controller_(c), model_(m), deck_(), panels(false, BORDER_LEN), menuBar(true, BORDER_LEN),
 newGameButton("New Game with Seed:"), seedEntry(), endGameButton("End Game"), newGameDialog("Start New Game", true),
 labelBox(true, BORDER_LEN), playerBox(true, BORDER_LEN), startBox(true, BORDER_LEN), startNewGameButton("Start New Game"),
-cancelButton("Cancel"), seedLabel("Seed: 0"), table(), playerDashboard(), currentPlayerLabel("Player 1's Turn"),
-currentScoreLabel("Score: 0"), rageButton("f#$k!"), currentDiscardsLabel("Discards: 0"),
-hand(true, 0), logBox(true, 10), logMessage("")  {
+cancelButton("Cancel"), seedLabel("Seed: 0"), table(), dashboardGrid_(), dashboardHintButton_("Hint", true),
+dashboardScoreLabel_("Score: 0"), dashboardRageButton_("Rage"), dashboardDiscardsLabel_("Discards: 0"),
+hand(true, 0), logBox(true, 10), logLabel_("")  {
 
 	// Sets some properties of the window.
 	set_title("Straights");
@@ -23,10 +24,19 @@ hand(true, 0), logBox(true, 10), logMessage("")  {
 	// Add panels to the window
 	add(panels);
 
-	// Set menu bar on top, followed by the table, playerDashboard and hand
+	// Initialize custom styling
+	auto css = Gtk::CssProvider::create();
+	css->load_from_data(
+		"#LegalPlay {\
+		background-color: #FFFF00;\
+		background-image: none;\
+		box-shadow: none;}");
+	this->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	// Set menu bar on top, followed by the table, dashboardGrid_ and hand
 	panels.add(menuBar);
 	panels.add(table);
-	panels.add(playerDashboard);
+	panels.add(dashboardFrame_);
 	panels.add(hand);
 	panels.add(logBox);
 
@@ -74,48 +84,43 @@ hand(true, 0), logBox(true, 10), logMessage("")  {
 	for (int y = 0; y < 4; y++) {
 		std::vector<std::unique_ptr<Gtk::Image>> rows;
 		for (int x = 0; x < 13; x++) {
-			rows.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
+			rows.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck_.emptyImage())));
 			table.attach(*rows.at(x), x, y, rows.at(x)->get_width(), rows.at(x)->get_height());
 		}
 		tableSlots.push_back(std::move(rows));
 	}
 
-	rageButton.set_halign(Gtk::ALIGN_CENTER);
-	rageButton.signal_clicked().connect(sigc::mem_fun(*this, &View::onRageButtonClicked));
-	playerDashboard.set_row_homogeneous(true);
-	playerDashboard.set_column_homogeneous(true);
+	dashboardFrame_.add(dashboardGrid_);
+	dashboardGrid_.set_border_width(5);
+	dashboardGrid_.set_row_homogeneous(true);
+	dashboardGrid_.set_column_homogeneous(true);
 
-	playerDashboard.attach(currentPlayerLabel, 0, 0, currentPlayerLabel.get_width(), currentPlayerLabel.get_height());
-	playerDashboard.attach(currentScoreLabel, 0, 1, currentScoreLabel.get_width(), currentScoreLabel.get_height());
-	playerDashboard.attach(rageButton, 1, 0, rageButton.get_width(), rageButton.get_height());
-	playerDashboard.attach(currentDiscardsLabel, 1, 1, currentDiscardsLabel.get_width(), currentDiscardsLabel.get_height());
+	dashboardHintButton_.set_halign(Gtk::ALIGN_CENTER);
+	dashboardHintButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::onHintButtonClicked));
+	dashboardRageButton_.set_halign(Gtk::ALIGN_CENTER);
+	dashboardRageButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::onRageButtonClicked));
+
+	dashboardGrid_.attach(dashboardHintButton_, 0, 0, dashboardHintButton_.get_width(), dashboardHintButton_.get_height());
+	dashboardGrid_.attach(dashboardScoreLabel_, 0, 1, dashboardScoreLabel_.get_width(), dashboardScoreLabel_.get_height());
+	dashboardGrid_.attach(dashboardRageButton_, 1, 0, dashboardRageButton_.get_width(), dashboardRageButton_.get_height());
+	dashboardGrid_.attach(dashboardDiscardsLabel_, 1, 1, dashboardDiscardsLabel_.get_width(), dashboardDiscardsLabel_.get_height());
 
 
 	// Initialize placeholders to hand
 	for (int i = 0; i < 13; i++) {
 		handButtons.push_back(std::unique_ptr<Gtk::Button>(new Gtk::Button()));
-		handImages.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
+		handImages.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck_.emptyImage())));
 
 		handButtons.at(i)->set_name("");
-
 		handButtons.at(i)->set_image(*handImages.at(i));
   	handButtons.at(i)->signal_clicked().connect(sigc::bind<unsigned int>(sigc::mem_fun(*this, &View::onCardClick), i));
 
 		hand.add(*handButtons.at(i));
 	}
 
-	// Initalize custom css
-	auto css = Gtk::CssProvider::create();
-	css->load_from_data(
-		"#LegalPlay {\
-		background-color: #FFFF00;\
-		background-image: none;\
-		box-shadow: none;}");
-		this->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
 	// Initialize an empty log box
 	logBox.set_halign(Gtk::ALIGN_END);
-	logBox.add(logMessage);
+	logBox.add(logLabel_);
 
 	// The final step is to display the buttons (they display themselves)
 	show_all();
@@ -145,6 +150,21 @@ void View::onEndGameButtonClicked() {
 	close();
 }
 
+void View::onHintButtonClicked() {
+	if (model_->legalPlays().isEmpty()) {
+		logLabel_.set_text("You have no legal plays. Choose a card to discard.");
+	} else {
+		int count = 0;
+		for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
+			if (model_->legalPlays().contains(*it)) {
+				handButtons.at(count++)->set_name("LegalPlay");
+			} else {
+				handButtons.at(count++)->set_name("");
+			}
+		}
+	}
+}
+
 void View::onRageButtonClicked() {
 	controller_->ragequit(model_->currPlayer()->number());
 }
@@ -168,11 +188,7 @@ void View::onStartNewGameButtonClicked() {
 			types.push_back(type);
 	}
 
-	seedEntry.set_text("");
-	clearTable();
-	clearHand();
-	logMessage.set_label("");
-
+	setNewGame();
 	newGameDialog.hide();
 	controller_->newGame(types, seed);
 }
@@ -223,68 +239,64 @@ void View::update() {
 		roundOverDialog.run();
 		roundOverDialog.close();
 
-		clearTable();
-		clearHand();
-		logMessage.set_label("");
-
-		// Initialize new round
+		setNewRound();
 		controller_->newRound();
 	} else {
-		if (model_->error().empty()) {
+		if (!model_->error()) {
 			// Update table
 			for (int s = CLUB; s != SUIT_COUNT; ++s) {
 				setTableRow(model_->playArea(), static_cast<Suit>(s));
 			}
 
 			// Update player dashboard
-			currentPlayerLabel.set_label("Player " + std::to_string(model_->currPlayer()->number()) + "'s Turn");
-			currentScoreLabel.set_label("Score: " + std::to_string(model_->currPlayer()->score()));
-			currentDiscardsLabel.set_label("Discards: " + std::to_string(model_->currPlayer()->discard().size()));
+			dashboardFrame_.set_label("Player " + std::to_string(model_->currPlayer()->number()));
+			dashboardScoreLabel_.set_label("Score: " + std::to_string(model_->currPlayer()->score()));
+			dashboardDiscardsLabel_.set_label("Discards: " + std::to_string(model_->currPlayer()->discard().size()));
 
 			// Update hands
 			int count = 0;
 			for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
-				if (model_->legalPlays().contains(*it)) {
-					handButtons.at(count)->set_name("LegalPlay");
-				} else {
-					handButtons.at(count)->set_name("");
-				}
-				handImages.at(count++)->set(deck.cardImage(**it));
+				handButtons.at(count)->set_name("");
+				handImages.at(count++)->set(deck_.cardImage(**it));
 			}
 
 			for (; count < 13; ++count) {
 				handButtons.at(count)->set_name("");
-				handImages.at(count++)->set(deck.emptyImage());
+				handImages.at(count++)->set(deck_.emptyImage());
 			}
 
 			// TODO: Show card last played? Clear error message for now
-			logMessage.set_label("");
+			std::cerr << "Player " << std::to_string(model_->currPlayer()->number()) << "'s turn."<< std::endl;
+			logLabel_.set_label("Player " + std::to_string(model_->currPlayer()->number()) + "'s turn.");
 
 		} else {
-			// TODO: Handle error
-			std::cout << model_->error() << std::endl;
-			// TODO: error messages should be determined by the view
-			logMessage.set_label(model_->error());
+			std::cerr << "You have a legal play. You may not discard." << std::endl;
+			logLabel_.set_label("You have a legal play. You may not discard.");
 		}
 	}
 	controller_->update();
 }
 
-void View::clearTable() {
-	for (auto it = tableSlots.begin(); it != tableSlots.end(); ++it) {
-		for (auto it2 = it->begin(); it2 != it->end(); ++it2) {
-			(*it2)->set(deck.emptyImage());
-		}
-	}
+void View::setNewGame() {
+	seedEntry.set_text("");
+	setNewRound();
 }
 
-void View::clearHand() {
+void View::setNewRound() {
+	for (auto it = tableSlots.begin(); it != tableSlots.end(); ++it) {
+		for (auto it2 = it->begin(); it2 != it->end(); ++it2) {
+			(*it2)->set(deck_.emptyImage());
+		}
+	}
+
 	for (auto it = handImages.begin(); it != handImages.end(); ++it) {
-		(*it)->set(deck.emptyImage());
+		(*it)->set(deck_.emptyImage());
 	}
 	for (auto it = handButtons.begin(); it != handButtons.end(); ++it) {
 		(*it)->set_name("");
 	}
+
+	logLabel_.set_label("");
 }
 
 void View::setTableRow(const SortedCardList &playArea, Suit suit) {
@@ -316,6 +328,6 @@ void View::setTableRow(const SortedCardList &playArea, Suit suit) {
 
 	for (; it != itEnd; ++it) {
 		int column = static_cast<int>((*it)->getRank());
-		tableRow.at(column)->set(deck.cardImage(**it));
+		tableRow.at(column)->set(deck_.cardImage(**it));
 	}
 }

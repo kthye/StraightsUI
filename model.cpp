@@ -17,7 +17,6 @@ using namespace std;
 const size_t Model::CARD_COUNT = 52;
 const size_t Model::PLAYER_COUNT = 4;
 const size_t Model::HAND_SIZE = Model::CARD_COUNT / Model::PLAYER_COUNT;
-const std::string Model::ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
 
 Model::Model()
 : seed_{0}, game_in_progress_{false}, round_in_progress_{false} {
@@ -44,7 +43,7 @@ bool Model::roundInProgress() const {
     return round_in_progress_;
 }
 
-std::string Model::error() const {
+bool Model::error() const {
     return error_;
 }
 
@@ -96,7 +95,7 @@ void Model::playCard(const Card * c) {
         cout << "Player " << (*curr_player_)->number() << " plays " << *c << endl;
         advancePlayer();
     } else if (!legal_plays.isEmpty()) {
-        error_ = ERR_HAS_LEGAL_PLAY;
+        error_ = true;
     } else {
         (*curr_player_)->removeFromHand(c);
         (*curr_player_)->addToDiscard(c);
@@ -111,7 +110,7 @@ void Model::play(const PlayerVisitor * pv) {
 }
 
 void Model::clearError() {
-    error_.clear();
+    error_ = false;
     notify();
 }
 
