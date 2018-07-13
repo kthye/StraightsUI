@@ -204,7 +204,7 @@ void View::onCardClick(unsigned int cardIndex) {
 }
 
 void View::update() {
-	if (model_->state() == Model::IN_ROUND) {
+	if (model_->state() == Model::GAME_ENDED) {
 		std::string winnersText = "";
 		std::string results = "";
 
@@ -242,7 +242,7 @@ void View::update() {
 		setNewRound();
 		controller_->newRound();
 	} else {
-		if (!model_->error()) {
+		if (model_->error() == Model::NONE) {
 			// Update table
 			for (int s = CLUB; s != SUIT_COUNT; ++s) {
 				setTableRow(model_->playArea(), static_cast<Suit>(s));

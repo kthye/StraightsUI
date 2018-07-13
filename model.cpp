@@ -82,13 +82,11 @@ void Model::newRound() {
 }
 
 void Model::endRound() {
-    updateScores();
     state_ = ROUND_ENDED;
     notify();
 }
 
 void Model::endGame() {
-    updateScores();
     populateWinners();
     state_ = GAME_ENDED;
     notify();
@@ -106,6 +104,7 @@ void Model::playCard(const Card * c) {
 void Model::discardCard(const Card * c) {
     (*curr_player_)->removeFromHand(c);
     (*curr_player_)->addToDiscard(c);
+    (*curr_player_)->incrementScore(GameLogic::calculateScore(c));
     advancePlayer();
     notify();
 }
@@ -185,13 +184,6 @@ void Model::advancePlayer() {
     ++curr_player_;
     if (curr_player_ == players_.end()) {
         curr_player_ = players_.begin();
-    }
-}
-
-void Model::updateScores() {
-    for (auto it = players_.begin(); it != players_.end(); ++it) {
-        size_t score_gained = GameLogic::calculateScore((*it)->discard());
-        (*it)->incrementScore(score_gained);
     }
 }
 

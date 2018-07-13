@@ -61,9 +61,6 @@ private:
     // Advances curr_player_ to the next player
     void advancePlayer();
 
-    // Adds the scores of the players' discards to the players' scores
-    void updateScores();
-
     // Populates winners_ using current player scores
     void populateWinners();
 

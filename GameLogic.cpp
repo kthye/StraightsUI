@@ -38,12 +38,8 @@ bool GameLogic::isPlayLegal(const SortedCardList& playArea, const Card* card) {
 	return false;
 }
 
-size_t GameLogic::calculateScore(const CardList& discard) {
-    size_t score = 0;
-	for (auto it = discard.begin(); it != discard.end(); ++it) {
-        score += (*it)->getRank() + 1;
-	}
-	return score;
+size_t GameLogic::calculateScore(const Card * card) {
+    return card->getRank() + 1;
 }
 
 bool GameLogic::isRoundOver(const std::vector<std::unique_ptr<Player>> & players) {
