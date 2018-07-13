@@ -21,6 +21,12 @@
 #include "DeckGUI.h"
 #include "SortedCardList.h"
 #include "model.h"
+#include "MenuBar.h"
+#include "NewGameDialog.h"
+#include "Dashboard.h"
+#include "Table.h"
+#include "Hand.h"
+#include "Log.h"
 
 class Controller;
 class Model;
@@ -34,73 +40,33 @@ private:
 	// View also needs an instance of the concrete subject it is observing
 	Model *model_;
 
-	// ADT containing all the Pixel Buffers of cards
 	DeckGUI deck_;
 
 	// Class for all the widgets on this window
-	Gtk::VBox panels;
-	Gtk::HBox menuBar;
-		Gtk::Button newGameButton;
-		Gtk::Entry seedEntry;
-		Gtk::Button endGameButton;
-		Gtk::Dialog newGameDialog;
-			Gtk::HBox seedBox;
-			Gtk::HBox labelBox;
-			Gtk::HBox playerBox;
-			Gtk::HBox startBox;
-			Gtk::Button startNewGameButton;
-			Gtk::Button cancelButton;
-			Gtk::Label seedLabel;
-			std::vector<std::unique_ptr<Gtk::Label>> playerLabels;
-			std::vector<std::unique_ptr<Gtk::Button>> playerToggleButtons;
-	Gtk::Grid table;
-		std::vector<std::vector<std::unique_ptr<Gtk::Image>>> tableSlots;
-	Gtk::Frame dashboardFrame_;
-	Gtk::Grid dashboardGrid_;
-		Gtk::Button dashboardHintButton_;
-		Gtk::Label dashboardScoreLabel_;
-		Gtk::Button dashboardRageButton_;
-		Gtk::Label dashboardDiscardsLabel_;
-	Gtk::HBox hand;
-		std::vector<std::unique_ptr<Gtk::Image>> handImages;
-		std::vector<std::unique_ptr<Gtk::Button>> handButtons;
-	Gtk::HBox logBox;
-		Gtk::Label logLabel_;
-
-	// Invoked when new game button is pressed
-	void onNewGameButtonClicked();
-
-	// Invoked when end game button is pressed
-	void onEndGameButtonClicked();
-
-	// Invoked when any cards in the hand are clicked
-	void onCardClick(unsigned int cardIndex);
-
-	// Invoked when the hint button is pressed
-	void onHintButtonClicked();
-
-	// Invoked when the rage button is pressed
-	void onRageButtonClicked();
-
-	// Invoked from new game dialog when a player is toggled
-	void onTogglePlayerClicked(int playerNumber);
-
-	// Invoked from new game dialog when start new game button is pressed
-	void onStartNewGameButtonClicked();
-
-	// Invoked from new game dialog when cancel button is clicked
-	void onCancelButtonClicked();
-
-	// Initializes widgets for new game
-	void setNewGame();
+	Gtk::VBox panels_;
+	MenuBar menu_bar_;
+	NewGameDialog new_game_dialog_;
+	Table table_;
+	Dashboard dashboard_;
+	Hand hand_;
+	Log log_;
 
 	// Initializes widgets for new round
 	void setNewRound();
 
-	// Sets
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 
 public:
+	void openNewGameDialog(unsigned int seed = 0);
+
+	void startNewGame(std::vector<Model::PlayerType> types, unsigned int seed);
+
+	void showHint();
+
+	void rageQuit();
+
+	void playCard(unsigned int cardIndex);
+
   View(Controller*, Model*);
   virtual ~View();
   virtual void update();	// Observer Pattern: concrete update() method
