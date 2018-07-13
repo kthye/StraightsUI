@@ -104,7 +104,6 @@ void Model::playCard(const Card * c) {
 void Model::discardCard(const Card * c) {
     (*curr_player_)->removeFromHand(c);
     (*curr_player_)->addToDiscard(c);
-    (*curr_player_)->incrementScore(GameLogic::calculateScore(c));
     advancePlayer();
     notify();
 }
@@ -122,6 +121,14 @@ void Model::clearError() {
 void Model::ragequit() {
     *curr_player_ = std::unique_ptr<Player>(new ComputerPlayer(std::move(**curr_player_)));
     notify();
+}
+
+// A notifying method must be called immediately after updateScores
+void Model::updateScores() {
+    for (auto it = players_.begin(); it != players_.end(); ++it) {
+        size_t score_gained = GameLogic::calculateScore((*it)->discard());
+        (*it)->incrementScore(score_gained);
+    }
 }
 
 // Note: this one does not notify since it might not change the state

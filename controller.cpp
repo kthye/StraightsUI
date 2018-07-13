@@ -42,13 +42,14 @@ void Controller::ragequit() {
 }
 
 void Controller::updateGame() {
-    if (model_->state() == Model::IN_ROUND) {
+    if (model_->state() == Model::IN_ROUND && GameLogic::isRoundOver(model_->players())) {
+        model_->updateScores();
         if (GameLogic::isGameOver(model_->players())) {
             model_->endGame();
-        } else if (GameLogic::isRoundOver(model_->players())) {
-            model_->endRound();
         } else {
-            model_->playCurrPlayer(&play_controller_);
+            model_->endRound();
         }
+    } else if (model_->state() == Model::IN_ROUND) {
+        model_->playCurrPlayer(&play_controller_);
     }
 }

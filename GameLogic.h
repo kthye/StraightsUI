@@ -25,7 +25,7 @@ public:
     static CardList getLegalPlays(const SortedCardList& playArea, const CardList& hand);
 
     // returns: the score of the given discard
-    static size_t calculateScore(const Card * card);
+    static size_t calculateScore(const CardList& discard);
 
     static bool isRoundOver(const std::vector<std::unique_ptr<Player>> & players);
 

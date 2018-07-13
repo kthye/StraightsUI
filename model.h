@@ -95,6 +95,7 @@ public:
     void clearError();
     void ragequit();
 
+    void updateScores();
     void playCurrPlayer(const PlayerVisitor * pv);
 
 }; // Model
