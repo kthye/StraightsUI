@@ -20,7 +20,7 @@
 #include "model.h"
 #include "PlayController.h"
 
-class Controller : public Observer {
+class Controller {
     PlayController play_controller_;
 public:
    Controller( Model* );
@@ -28,8 +28,7 @@ public:
    void newRound();
    void playCard(const Card * c);
    void ragequit(size_t number);
-
-   void update() override;
+   void update();
 private:
    Model *model_;
 }; // Controller

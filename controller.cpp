@@ -14,9 +14,7 @@
 #include "model.h"
 #include "GameLogic.h"
 
-Controller::Controller(Model *m) : play_controller_{m}, model_(m) {
-    model_->subscribe(this);
-}
+Controller::Controller(Model *m) : play_controller_{m}, model_(m) {}
 
 
 void Controller::newGame(const std::vector<PlayerType> & types, int seed) {

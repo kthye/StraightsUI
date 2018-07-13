@@ -89,6 +89,7 @@ public:
     bool roundInProgress() const;
     std::string error() const;
     const std::vector<std::vector<const Player *>> & winners() const;
+    CardList legalPlays();
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);
     void endGame();

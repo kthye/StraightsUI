@@ -52,6 +52,10 @@ const std::vector<std::vector<const Player *>> & Model::winners() const {
     return winners_;
 }
 
+CardList Model::legalPlays() {
+    return GameLogic::getLegalPlays(play_area_, (*curr_player_)->hand());
+}
+
 void Model::newGame(const std::vector<PlayerType> & types, int seed) {
     players_.clear();
     winners_.clear();

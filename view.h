@@ -70,6 +70,7 @@ private:
 	void onNewGameButtonClicked();
 	void onEndGameButtonClicked();
 	void onCardClick(unsigned int cardIndex);
+	void onRageButtonClicked();
 
 	void onTogglePlayerClicked(int playerNumber);
 	void onStartNewGameButtonClicked();

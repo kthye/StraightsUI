@@ -81,6 +81,7 @@ hand(true, 0), logBox(true, 10), logMessage("")  {
 	}
 
 	rageButton.set_halign(Gtk::ALIGN_CENTER);
+	rageButton.signal_clicked().connect(sigc::mem_fun(*this, &View::onRageButtonClicked));
 	playerDashboard.set_row_homogeneous(true);
 	playerDashboard.set_column_homogeneous(true);
 
@@ -95,7 +96,7 @@ hand(true, 0), logBox(true, 10), logMessage("")  {
 		handButtons.push_back(std::unique_ptr<Gtk::Button>(new Gtk::Button()));
 		handImages.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image(deck.emptyImage())));
 
-		handButtons.at(i)->set_name("test");
+		handButtons.at(i)->set_name("");
 
 		handButtons.at(i)->set_image(*handImages.at(i));
   	handButtons.at(i)->signal_clicked().connect(sigc::bind<unsigned int>(sigc::mem_fun(*this, &View::onCardClick), i));
@@ -144,6 +145,10 @@ void View::onEndGameButtonClicked() {
 	close();
 }
 
+void View::onRageButtonClicked() {
+	controller_->ragequit(model_->currPlayer()->number());
+}
+
 void View::onTogglePlayerClicked(int playerNumber) {
 	if (playerToggleButtons.at(playerNumber - 1)->get_label() == "Computer") {
 		playerToggleButtons.at(playerNumber - 1)->set_label("Human");
@@ -164,6 +169,10 @@ void View::onStartNewGameButtonClicked() {
 	}
 
 	seedEntry.set_text("");
+	clearTable();
+	clearHand();
+	logMessage.set_label("");
+
 	newGameDialog.hide();
 	controller_->newGame(types, seed);
 }
@@ -173,7 +182,6 @@ void View::onCancelButtonClicked() {
 }
 
 void View::onCardClick(unsigned int cardIndex) {
-	std::cout << "Card clicked!" << std::endl;
 	if (cardIndex < model_->currPlayer()->hand().size()) {
 		controller_->playCard(model_->currPlayer()->hand().at(cardIndex));
 	}
@@ -215,9 +223,11 @@ void View::update() {
 		roundOverDialog.run();
 		roundOverDialog.close();
 
-		// Initialize new round
 		clearTable();
 		clearHand();
+		logMessage.set_label("");
+
+		// Initialize new round
 		controller_->newRound();
 	} else {
 		if (model_->error().empty()) {
@@ -231,12 +241,19 @@ void View::update() {
 			currentScoreLabel.set_label("Score: " + std::to_string(model_->currPlayer()->score()));
 			currentDiscardsLabel.set_label("Discards: " + std::to_string(model_->currPlayer()->discard().size()));
 
-			// Update hand
+			// Update hands
 			int count = 0;
 			for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
+				if (model_->legalPlays().contains(*it)) {
+					handButtons.at(count)->set_name("LegalPlay");
+				} else {
+					handButtons.at(count)->set_name("");
+				}
 				handImages.at(count++)->set(deck.cardImage(**it));
 			}
+
 			for (; count < 13; ++count) {
+				handButtons.at(count)->set_name("");
 				handImages.at(count++)->set(deck.emptyImage());
 			}
 
@@ -250,6 +267,7 @@ void View::update() {
 			logMessage.set_label(model_->error());
 		}
 	}
+	controller_->update();
 }
 
 void View::clearTable() {
@@ -263,6 +281,9 @@ void View::clearTable() {
 void View::clearHand() {
 	for (auto it = handImages.begin(); it != handImages.end(); ++it) {
 		(*it)->set(deck.emptyImage());
+	}
+	for (auto it = handButtons.begin(); it != handButtons.end(); ++it) {
+		(*it)->set_name("");
 	}
 }
 
