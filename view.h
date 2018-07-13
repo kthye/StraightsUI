@@ -42,7 +42,7 @@ private:
 
 	DeckGUI deck_;
 
-	// Class for all the widgets on this window
+	// Widgets
 	Gtk::VBox panels_;
 	MenuBar menu_bar_;
 	NewGameDialog new_game_dialog_;
@@ -54,9 +54,11 @@ private:
 	// Initializes widgets for new round
 	void setNewRound();
 
+	// Sets table rows
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 
 public:
+	
 	void openNewGameDialog(unsigned int seed = 0);
 
 	void startNewGame(std::vector<Model::PlayerType> types, unsigned int seed);

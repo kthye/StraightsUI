@@ -11,11 +11,13 @@
 #include "Log.h"
 
 const int BORDER_LEN = 10;
+const int TABLE_ROWS = 4;
+const int TABLE_COLUMNS = 13;
 const std::string ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
 
 View::View(Controller *c, Model *m) : controller_(c), model_(m), deck_(), panels_(false, BORDER_LEN), menu_bar_(this),
-new_game_dialog_(this), table_(this, 4, 13), dashboard_(this),
-hand_(this, 13), log_(this)  {
+new_game_dialog_(this), table_(this, TABLE_ROWS, TABLE_COLUMNS), dashboard_(this),
+hand_(this, TABLE_COLUMNS), log_(this)  {
 
 	// Sets some properties of the window.
 	set_title("Straights");
@@ -38,7 +40,7 @@ hand_(this, 13), log_(this)  {
   }
 
 	// Initialize placeholders to hand
-	for (int i = 0; i < 13; i++) {
+	for (int i = 0; i < TABLE_COLUMNS; i++) {
 		hand_.setCard(deck_.emptyImage(), i);
 	}
 
@@ -88,6 +90,8 @@ void View::playCard(unsigned int cardIndex) {
 
 void View::update() {
 	if (model_->state() == Model::GAME_ENDED) {
+		dashboard_.disable();
+
 		std::string winnersText = "";
 		std::string results = "";
 
@@ -119,6 +123,13 @@ void View::update() {
 			"Player 2 \t Score: " + std::to_string(model_->players().at(1)->score()) + "\n" +
 			"Player 3 \t Score: " + std::to_string(model_->players().at(2)->score()) + "\n" +
 			"Player 4 \t Score: " + std::to_string(model_->players().at(3)->score()) + "\n");
+
+			// Update dashboard
+			for (unsigned int i = 0; i < model_->PLAYER_COUNT; ++i) {
+				dashboard_.setScore(i + 1, "Score: " + std::to_string(model_->players().at(i)->score()));
+				dashboard_.setDiscards(i + 1, "Discards: " + std::to_string(model_->players().at(i)->discard().size()));
+			}
+
 		roundOverDialog.run();
 		roundOverDialog.close();
 
@@ -131,21 +142,21 @@ void View::update() {
 				setTableRow(model_->playArea(), static_cast<Suit>(s));
 			}
 
-			// Update player dashboard
-			dashboard_.set_label("Player " + std::to_string(model_->currPlayer()->number()));
-			dashboard_.setScore("Score: " + std::to_string(model_->currPlayer()->score()));
-			dashboard_.setDiscards("Discards: " + std::to_string(model_->currPlayer()->discard().size()));
+			// Update dashboard
+			for (unsigned int i = 0; i < model_->PLAYER_COUNT; ++i) {
+				dashboard_.setDiscards(i + 1, "Discards: " + std::to_string(model_->players().at(i)->discard().size()));
+			}
 
 			// Update hands
 			int count = 0;
 			for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
 				hand_.setCard(deck_.cardImage(**it), count++);
 			}
-
-			for (; count < 13; ++count) {
+			for (; count < TABLE_COLUMNS; ++count) {
 				hand_.setCard(deck_.emptyImage(), count);
 			}
 
+			// Update log
 			log_.set("Player " + std::to_string(model_->currPlayer()->number()) + "'s turn.");
 
 		} else {
@@ -158,6 +169,7 @@ void View::update() {
 
 void View::startNewGame(std::vector<Model::PlayerType> types, unsigned int seed) {
 	menu_bar_.eraseSeedEntry();
+	dashboard_.enable();
 	setNewRound();
 	controller_->newGame(types, seed);
 }
@@ -169,7 +181,7 @@ void View::setNewRound() {
 		}
 	}
 
-	for (int i = 0; i < 13; ++i) {
+	for (int i = 0; i < TABLE_COLUMNS; ++i) {
 		hand_.setCard(deck_.emptyImage(), i);
 	}
 

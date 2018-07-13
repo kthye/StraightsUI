@@ -1,24 +1,44 @@
 #include "Dashboard.h"
 #include "view.h"
 
-Dashboard::Dashboard(View* parent) : Gtk::Frame(), parent_{parent}, grid_(),
-hint_button_("Hint", true),
-score_label_("Score: 0"), rage_button_("Rage"), discards_label_("Discards: 0") {
+const int BORDER_LEN = 10;
+const int PLAYER_COUNT = 4;
 
-  add(grid_);
-  grid_.set_border_width(5);
-  grid_.set_row_homogeneous(true);
-  grid_.set_column_homogeneous(true);
+Dashboard::Dashboard(View* parent) : Gtk::HBox(true, BORDER_LEN), parent_{parent},
+hint_button_("Hint", 10), rage_button_("Rage", 10) {
 
-  hint_button_.set_halign(Gtk::ALIGN_CENTER);
+  hint_button_.set_valign(Gtk::ALIGN_CENTER);
+  hint_button_.set_border_width(BORDER_LEN);
   hint_button_.signal_clicked().connect(sigc::mem_fun(*this, &Dashboard::onHintButtonClicked));
-  rage_button_.set_halign(Gtk::ALIGN_CENTER);
+  rage_button_.set_valign(Gtk::ALIGN_CENTER);
+  rage_button_.set_border_width(BORDER_LEN);
   rage_button_.signal_clicked().connect(sigc::mem_fun(*this, &Dashboard::onRageButtonClicked));
 
-  grid_.attach(hint_button_, 0, 0, hint_button_.get_width(), hint_button_.get_height());
-  grid_.attach(score_label_, 0, 1, score_label_.get_width(), score_label_.get_height());
-  grid_.attach(rage_button_, 1, 0, rage_button_.get_width(), rage_button_.get_height());
-  grid_.attach(discards_label_, 1, 1, discards_label_.get_width(), discards_label_.get_height());
+  for (int i = 0; i < PLAYER_COUNT; ++i) {
+    frames_.push_back(std::unique_ptr<Gtk::Frame>(new Gtk::Frame("Player " + std::to_string(i + 1))));
+    frame_boxes_.push_back(std::unique_ptr<Gtk::VBox>(new Gtk::VBox(true, BORDER_LEN)));
+    score_labels_.push_back(std::unique_ptr<Gtk::Label>(new Gtk::Label("Score: 0")));
+    discards_labels_.push_back(std::unique_ptr<Gtk::Label>(new Gtk::Label("Discards: 0")));
+
+    frame_boxes_.at(i)->add(*score_labels_.at(i));
+    frame_boxes_.at(i)->add(*discards_labels_.at(i));
+    frames_.at(i)->add(*frame_boxes_.at(i));
+  }
+  frames_.push_back(std::unique_ptr<Gtk::Frame>(new Gtk::Frame("Menu")));
+  frame_boxes_.push_back(std::unique_ptr<Gtk::VBox>(new Gtk::VBox(true, BORDER_LEN)));
+  frame_boxes_.at(PLAYER_COUNT)->add(hint_button_);
+  frame_boxes_.at(PLAYER_COUNT)->add(rage_button_);
+  frames_.at(PLAYER_COUNT)->add(*frame_boxes_.at(PLAYER_COUNT));
+
+  column1.add(*frames_.at(0));
+  column1.add(*frames_.at(1));
+  column2.add(*frames_.at(4));
+  column3.add(*frames_.at(2));
+  column3.add(*frames_.at(3));
+
+  add(column1);
+  add(column2);
+  add(column3);
 }
 
 void Dashboard::onHintButtonClicked() {
@@ -29,10 +49,20 @@ void Dashboard::onRageButtonClicked() {
   parent_->rageQuit();
 }
 
-void Dashboard::setScore(std::string score) {
-  score_label_.set_text(score);
+void Dashboard::setScore(int playerNumber, std::string score) {
+    score_labels_.at(playerNumber - 1)->set_text(score);
 }
 
-void Dashboard::setDiscards(std::string discards) {
-  discards_label_.set_text(discards);
+void Dashboard::setDiscards(int playerNumber, std::string discards) {
+    discards_labels_.at(playerNumber - 1)->set_text(discards);
+}
+
+void Dashboard::disable() {
+  hint_button_.set_sensitive(false);
+  rage_button_.set_sensitive(false);
+}
+
+void Dashboard::enable() {
+  hint_button_.set_sensitive(true);
+  rage_button_.set_sensitive(true);
 }

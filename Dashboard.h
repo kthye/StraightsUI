@@ -3,17 +3,23 @@
 
 #include <string>
 #include <gtkmm.h>
+#include <vector>
 
 class View;
 
-class Dashboard : public Gtk::Frame {
+class Dashboard : public Gtk::HBox {
   View* parent_;
 
-  Gtk::Grid grid_;
+  Gtk::VBox column1;
+  Gtk::VBox column2;
+  Gtk::VBox column3;
+
   Gtk::Button hint_button_;
-  Gtk::Label score_label_;
   Gtk::Button rage_button_;
-  Gtk::Label discards_label_;
+  std::vector<std::unique_ptr<Gtk::Frame>> frames_;
+  std::vector<std::unique_ptr<Gtk::VBox>> frame_boxes_;
+  std::vector<std::unique_ptr<Gtk::Label>> score_labels_;
+  std::vector<std::unique_ptr<Gtk::Label>> discards_labels_;
 
   // Invoked when the hint button is pressed
   void onHintButtonClicked();
@@ -24,8 +30,10 @@ class Dashboard : public Gtk::Frame {
 public:
   Dashboard(View* parent);
 
-  void setScore(std::string score);
-  void setDiscards(std::string discards);
+  void setScore(int playerNumber, std::string score);
+  void setDiscards(int playerNumber, std::string discards);
+  void disable();
+  void enable();
 };
 
 #endif
