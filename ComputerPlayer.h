@@ -13,7 +13,9 @@ public:
     // ensures: underlying Player is move constructed with the passed player
     ComputerPlayer(Player && player);
 
+    // calls the given visitor on this object
     void play(const PlayerVisitor * pv) override;
-};
+    
+}; // ComputerPlayer
 
 #endif

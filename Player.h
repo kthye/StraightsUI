@@ -28,17 +28,42 @@ public:
     Player(Player && other) = default;
     virtual ~Player() = default;
 
+    // returns: the player's hand
     const CardList & hand() const;
+
+    // returns: the player's discard
     const CardList & discard() const;
+
+    // returns: the player's score
     size_t score() const;
+
+    // returns: the player's number
+    // this is always the number the player was initialized with
     size_t number() const;
 
+    // modifies: hand
+    // ensures: hand has been replaced with the passed argument
     void setHand(CardList && hand);
+
+    // requires: c is a valid pointer to a card in the deck of the current game
+    // modifies: hand
+    // ensures: c is removed from the player's hand
     void removeFromHand(const Card * c);
+
+    // requires: c is a valid pointer to a card in the deck of the current game
+    // modifies: discard
+    // ensures: c is added to the player's discard
     void addToDiscard(const Card * c);
-    void incrementScore(int score);
+
+    // modifies: score
+    // ensures: the player's score is incremented by the passed amount
+    void incrementScore(size_t score);
+
+    // modifies: discard
+    // ensures: discard is empty
     void clearDiscard();
 
+    // calls play on the passed visitor
     virtual void play(const PlayerVisitor * pv) = 0;
 };
 

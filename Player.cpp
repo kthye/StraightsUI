@@ -44,7 +44,7 @@ void Player::addToDiscard(const Card * c) {
     discard_.addCard(c);
 }
 
-void Player::incrementScore(int score) {
+void Player::incrementScore(size_t score) {
   score_ += score;
 }
 

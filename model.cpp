@@ -204,8 +204,9 @@ struct scores_ascending
 
 // requires: winners should have been cleared
 void Model::populateWinners() {
-    // put players into score buckets
+    // iterate over all players
     for (auto pit = players_.begin(); pit != players_.end(); ++pit) {
+        // for each player, find the appropriate score bucket to place them in
         std::vector<std::vector<const Player *>>::iterator bit;
         for (bit = winners_.begin(); bit != winners_.end(); ++bit) {
             if ((*bit).at(0)->score() == (*pit)->score()) {
@@ -213,6 +214,7 @@ void Model::populateWinners() {
                 break;
             }
         }
+        // if a score bucket for their score doesn't exist, create it
         if (bit == winners_.end()) {
             winners_.push_back(std::vector<const Player *> { (*pit).get() });
         }

@@ -18,6 +18,7 @@ public:
     // The card which determines the player who should play first
     static const Card STARTING_CARD;
 
+    // The score past which the game should be ended
     static const size_t MAX_SCORE;
 
     // requires: playArea and hand to be valid references to the table and hand respectively in the same game
@@ -27,8 +28,10 @@ public:
     // returns: the score of the given discard
     static size_t calculateScore(const CardList& discard);
 
+    // returns: whether the round is over based on the players' hands
     static bool isRoundOver(const std::vector<std::unique_ptr<Player>> & players);
 
+    // returns: whether the game is over based on the players' scores
     static bool isGameOver(const std::vector<std::unique_ptr<Player>> & players);
 };
 

@@ -1,12 +1,5 @@
 /*
- * MVC example of GTKmm program
- *
- * Controller class.  Is responsible for translating UI events (from the View)
- * into method calls to the Model.
- *
- *  Created by Jo Atlee on 06/07/09.
- *  Copyright 2009 UW. All rights reserved.
- *
+ * Adapted from MVC example by Jo Atlee
  */
 
 
@@ -43,6 +36,8 @@ void Controller::ragequit() {
 
 void Controller::updateGame() {
     if (model_->state() == Model::IN_ROUND && GameLogic::isRoundOver(model_->players())) {
+        // We must update scores before checking whether the game is over, as isGameOver
+        // checks the current scores of the players
         model_->updateScores();
         if (GameLogic::isGameOver(model_->players())) {
             model_->endGame();

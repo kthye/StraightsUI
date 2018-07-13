@@ -1,0 +1,5 @@
+1. Finish documentation
+2. Test things (try to break the UI -- try pressing buttons when you shouldn't, etc.)
+3. Rename model/view/controller/subject/observer files to use capitals (should rename in #includes as well)
+4. Create bonus.txt (we added legal plays indicator when you press the hint button)
+5. Submit a zip of the DIRECTORY (not the individual files) to Marmoset
