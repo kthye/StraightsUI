@@ -1,7 +1,7 @@
 #include "Hand.h"
 #include "StraightsView.h"
 
-Hand::Hand(View* parent, int handSize) : Gtk::HBox(true, 10), parent_{parent},
+Hand::Hand(StraightsView* parent, int handSize) : Gtk::HBox(true, 10), parent_{parent},
 hand_size_{handSize} {
   // Initialize custom styling
 	auto css = Gtk::CssProvider::create();

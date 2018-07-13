@@ -16,10 +16,10 @@
 #include "Log.h"
 #include "StraightsModel.h"
 
-class Controller;
+class StraightsController;
 
 
-class View : public Gtk::Window, public Observer {
+class StraightsView : public Gtk::Window, public Observer {
 	// Spec fields
 	// menu bar - containing options to start or end the game
 	// table - the play area of the game with the cards already played
@@ -27,13 +27,13 @@ class View : public Gtk::Window, public Observer {
 	// hand - the active players hand
 	//
 private:
-	// View needs an instance of the controller for its buttons to invoke
-	Controller* controller_;
+	// StraightsView needs an instance of the controller for its buttons to invoke
+	StraightsController* controller_;
 
-	// View also needs an instance of the concrete subject it is observing
-	Model *model_;
+	// StraightsView also needs an instance of the concrete subject it is observing
+	StraightsModel *model_;
 
-	// View needs to instantiate the deck images
+	// StraightsView needs to instantiate the deck images
 	DeckGUI deck_;
 
 	// Widgets
@@ -55,7 +55,7 @@ public:
 
 	void openNewGameDialog(unsigned int seed = 0);
 
-	void startNewGame(std::vector<Model::PlayerType> types, unsigned int seed);
+	void startNewGame(std::vector<StraightsModel::PlayerType> types, unsigned int seed);
 
 	void showHint();
 
@@ -63,8 +63,8 @@ public:
 
 	void playCard(unsigned int cardIndex);
 
-  View(Controller*, Model*);
-  virtual ~View();
+  StraightsView(StraightsController*, StraightsModel*);
+  virtual ~StraightsView();
   virtual void update();	// Observer Pattern: concrete update() method
 };
 

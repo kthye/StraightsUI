@@ -4,7 +4,7 @@
 const int BORDER_LEN = 10;
 const int PLAYER_COUNT = 4;
 
-Dashboard::Dashboard(View* parent) : Gtk::HBox(true, BORDER_LEN), parent_{parent},
+Dashboard::Dashboard(StraightsView* parent) : Gtk::HBox(true, BORDER_LEN), parent_{parent},
 hint_button_("Hint", 10), rage_button_("Rage", 10) {
 
   hint_button_.set_valign(Gtk::ALIGN_CENTER);

@@ -4,10 +4,10 @@
 #include <gtkmm.h>
 #include "NewGameDialog.h"
 
-class View;
+class StraightsView;
 
 class NewGameDialog : public Gtk::Dialog {
-  View* parent_;
+  StraightsView* parent_;
   Gtk::HBox seed_box_;
   Gtk::HBox label_box_;
   Gtk::HBox player_box_;
@@ -31,7 +31,7 @@ class NewGameDialog : public Gtk::Dialog {
   void onCancelButtonClicked();
 public:
   // Dialog requires parent
-  NewGameDialog(View* parent);
+  NewGameDialog(StraightsView* parent);
 
   void setSeed(unsigned int seed);
 };

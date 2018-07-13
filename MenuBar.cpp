@@ -4,7 +4,7 @@
 
 const int BORDER_LEN = 10;
 
-MenuBar::MenuBar(View* parent) : Gtk::HBox(true, BORDER_LEN), parent_{parent}, new_game_button_("New Game with Seed:"),
+MenuBar::MenuBar(StraightsView* parent) : Gtk::HBox(true, BORDER_LEN), parent_{parent}, new_game_button_("New Game with Seed:"),
 seed_entry_(), end_game_button_("End Game") {
 
 	add(new_game_button_);

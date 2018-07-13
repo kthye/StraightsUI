@@ -7,35 +7,35 @@
 #include "GameLogic.h"
 #include "CardList.h"
 
-Controller::Controller(Model * m) : model_{m}, play_controller_{m} {}
+StraightsController::StraightsController(StraightsModel * m) : model_{m}, play_controller_{m} {}
 
-void Controller::newGame(const std::vector<Model::PlayerType> & types, int seed) {
+void StraightsController::newGame(const std::vector<StraightsModel::PlayerType> & types, int seed) {
     model_->newGame(types, seed);
 }
 
-void Controller::newRound() {
+void StraightsController::newRound() {
     model_->newRound();
 }
 
-void Controller::play(const Card * c) {
+void StraightsController::play(const Card * c) {
     model_->clearError();
 
     CardList legal_plays = model_->currLegalPlays();
     if (legal_plays.contains(c)) {
         model_->playCard(c);
     } else if (!legal_plays.isEmpty()) {
-        model_->setError(Model::ILLEGAL_DISCARD);
+        model_->setError(StraightsModel::ILLEGAL_DISCARD);
     } else {
         model_->discardCard(c);
     }
 }
 
-void Controller::ragequit() {
+void StraightsController::ragequit() {
     model_->ragequit();
 }
 
-void Controller::updateGame() {
-    if (model_->state() == Model::IN_ROUND && GameLogic::isRoundOver(model_->players())) {
+void StraightsController::updateGame() {
+    if (model_->state() == StraightsModel::IN_ROUND && GameLogic::isRoundOver(model_->players())) {
         // We must update scores before checking whether the game is over, as isGameOver
         // checks the current scores of the players
         model_->updateScores();
@@ -44,7 +44,7 @@ void Controller::updateGame() {
         } else {
             model_->endRound();
         }
-    } else if (model_->state() == Model::IN_ROUND) {
+    } else if (model_->state() == StraightsModel::IN_ROUND) {
         model_->playCurrPlayer(&play_controller_);
     }
 }

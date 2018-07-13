@@ -13,7 +13,7 @@ const int TABLE_ROWS = 4;
 const int TABLE_COLUMNS = 13;
 const std::string ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
 
-View::View(Controller *c, Model *m) : controller_(c), model_(m), deck_(), panels_(false, BORDER_LEN), menu_bar_(this),
+StraightsView::StraightsView(StraightsController *c, StraightsModel *m) : controller_(c), model_(m), deck_(), panels_(false, BORDER_LEN), menu_bar_(this),
 new_game_dialog_(this), table_(this, TABLE_ROWS, TABLE_COLUMNS), dashboard_(this),
 hand_(this, TABLE_COLUMNS), log_(this)  {
 
@@ -52,16 +52,16 @@ hand_(this, TABLE_COLUMNS), log_(this)  {
 	openNewGameDialog();
 }
 
-View::~View() {}
+StraightsView::~StraightsView() {}
 
-void View::openNewGameDialog(unsigned int seed) {
+void StraightsView::openNewGameDialog(unsigned int seed) {
 	new_game_dialog_.setSeed(seed);
 	new_game_dialog_.show_all();
 	new_game_dialog_.set_keep_above(true);
 	new_game_dialog_.present();
 }
 
-void View::showHint() {
+void StraightsView::showHint() {
 	if (model_->currLegalPlays().isEmpty()) {
 		log_.set(ERR_HAS_LEGAL_PLAY);
 	} else {
@@ -76,18 +76,18 @@ void View::showHint() {
 	}
 }
 
-void View::rageQuit() {
+void StraightsView::rageQuit() {
 	controller_->ragequit();
 }
 
-void View::playCard(unsigned int cardIndex) {
+void StraightsView::playCard(unsigned int cardIndex) {
 	if (cardIndex < model_->currPlayer()->hand().size()) {
 		controller_->play(model_->currPlayer()->hand().at(cardIndex));
 	}
 }
 
-void View::update() {
-	if (model_->state() == Model::GAME_ENDED) {
+void StraightsView::update() {
+	if (model_->state() == StraightsModel::GAME_ENDED) {
 		dashboard_.disable();
         hand_.disable();
 
@@ -111,7 +111,7 @@ void View::update() {
 		gameOverDialog.set_secondary_text(results);
 		gameOverDialog.run();
 		gameOverDialog.close();
-	} else if (model_->state() == Model::ROUND_ENDED) {
+	} else if (model_->state() == StraightsModel::ROUND_ENDED) {
 
 		// Display round over dialog
 		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
@@ -136,7 +136,7 @@ void View::update() {
 		setNewRound();
 		controller_->newRound();
 	} else {
-		if (model_->error() == Model::NONE) {
+		if (model_->error() == StraightsModel::NONE) {
 			// Update table
 			for (int s = CLUB; s != SUIT_COUNT; ++s) {
 				setTableRow(model_->playArea(), static_cast<Suit>(s));
@@ -167,7 +167,7 @@ void View::update() {
 	controller_->updateGame();
 }
 
-void View::startNewGame(std::vector<Model::PlayerType> types, unsigned int seed) {
+void StraightsView::startNewGame(std::vector<StraightsModel::PlayerType> types, unsigned int seed) {
 	menu_bar_.eraseSeedEntry();
 	dashboard_.enable();
     hand_.enable();
@@ -175,7 +175,7 @@ void View::startNewGame(std::vector<Model::PlayerType> types, unsigned int seed)
 	controller_->newGame(types, seed);
 }
 
-void View::setNewRound() {
+void StraightsView::setNewRound() {
 	for (int s = CLUB; s < SUIT_COUNT; ++s) {
 		for (int r = ACE; r < RANK_COUNT; ++r) {
 			table_.setCell(deck_.emptyImage(), r, s);
@@ -189,7 +189,7 @@ void View::setNewRound() {
 	log_.set("");
 }
 
-void View::setTableRow(const SortedCardList &playArea, Suit suit) {
+void StraightsView::setTableRow(const SortedCardList &playArea, Suit suit) {
 
 	SortedCardList::iterator it = playArea.begin();
 	SortedCardList::iterator itEnd = playArea.end();

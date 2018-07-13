@@ -5,10 +5,10 @@
 #include <gtkmm.h>
 #include <vector>
 
-class View;
+class StraightsView;
 
 class Dashboard : public Gtk::HBox {
-  View* parent_;
+  StraightsView* parent_;
 
   Gtk::VBox column1;
   Gtk::VBox column2;
@@ -28,7 +28,7 @@ class Dashboard : public Gtk::HBox {
   void onRageButtonClicked();
 
 public:
-  Dashboard(View* parent);
+  Dashboard(StraightsView* parent);
 
   void setScore(int playerNumber, std::string score);
   void setDiscards(int playerNumber, std::string discards);

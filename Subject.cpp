@@ -14,13 +14,13 @@
 #include "Subject.h"
 #include "Observer.h"
 
-void Subject::subscribe (Observer *newView) {
-    observers_.insert(newView);
+void Subject::subscribe (Observer *newStraightsView) {
+    observers_.insert(newStraightsView);
 }
 
 
-void Subject::unsubscribe (Observer *formerView) {
-     observers_.erase(formerView);
+void Subject::unsubscribe (Observer *formerStraightsView) {
+     observers_.erase(formerStraightsView);
 }
 
 

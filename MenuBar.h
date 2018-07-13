@@ -3,10 +3,10 @@
 
 #include <gtkmm.h>
 
-class View;
+class StraightsView;
 
 class MenuBar : public Gtk::HBox {
-  View* parent_;
+  StraightsView* parent_;
 
 	Gtk::Button new_game_button_;
 	Gtk::Entry seed_entry_;
@@ -19,7 +19,7 @@ class MenuBar : public Gtk::HBox {
   void onEndGameButtonClicked();
 
 public:
-  MenuBar(View* parent);
+  MenuBar(StraightsView* parent);
   void eraseSeedEntry();
 };
 

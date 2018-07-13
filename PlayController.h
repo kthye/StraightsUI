@@ -5,13 +5,13 @@
 
 class HumanPlayer;
 class ComputerPlayer;
-class Model;
+class StraightsModel;
 
 class PlayController : public PlayerVisitor {
-    Model * model_;
+    StraightsModel * model_;
 public:
     // requires: model is a valid pointer to the game's model
-    PlayController(Model * model);
+    PlayController(StraightsModel * model);
 
     // waits for human input
     void visitPlayer(const HumanPlayer & hp) const override;

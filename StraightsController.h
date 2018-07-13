@@ -12,18 +12,18 @@
 
 class Card;
 
-class Controller {
+class StraightsController {
     // Spec fields
     // model - the complete representation of the game
-    Model *model_;
+    StraightsModel *model_;
     PlayController play_controller_;
 
 public:
     // requires: model is a valid pointer to a model object
-    Controller(Model * model);
+    StraightsController(StraightsModel * model);
 
     // calls model.newGame, so has the same spec
-    void newGame(const std::vector<Model::PlayerType> & types, int seed = 0);
+    void newGame(const std::vector<StraightsModel::PlayerType> & types, int seed = 0);
 
     // calls model.newRound, so has the same spec
     void newRound();
@@ -41,7 +41,7 @@ public:
     // checks if the round or game should be ended
     void updateGame();
 
-}; // Controller
+}; // StraightsController
 
 
 #endif

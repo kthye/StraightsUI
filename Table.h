@@ -7,18 +7,18 @@
 #include <memory>
 #include "Card.h"
 
-class View;
+class StraightsView;
 
 class Table : public Gtk::Grid {
 
-  View* parent_;
+  StraightsView* parent_;
 
   std::vector<std::vector<std::unique_ptr<Gtk::Image>>> table_slots_;
   int rows_;
   int columns_;
 public:
 
-  Table(View* parent, int rows, int columns);
+  Table(StraightsView* parent, int rows, int columns);
   void setCell(Glib::RefPtr<Gdk::Pixbuf> buffer, int x, int y);
 };
 

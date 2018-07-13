@@ -14,7 +14,7 @@
 class Card;
 class PlayController;
 
-class Model : public Subject {
+class StraightsModel : public Subject {
     // Spec fields
     // seed - the integer used to seed the RNG for shuffling
     // deck - the collection of cards used for a game
@@ -63,10 +63,10 @@ private:
     std::vector<std::vector<const Player *>> winners_;
 
     // The current state of the game
-    Model::GameState state_;
+    StraightsModel::GameState state_;
 
     // The current error, if it exists
-    Model::Error error_;
+    StraightsModel::Error error_;
 
     // Initializes the internal deck representation
     void initDeck();
@@ -100,7 +100,7 @@ public:
     // ensures: seed is set to 0, state is set to INITIAL, and error is set to NONE
     // ensures: deck is initialized
     // ensures: all other members are default initialized
-    Model();
+    StraightsModel();
 
     // returns: players of the current game
     const std::vector<std::unique_ptr<Player>> & players() const;
@@ -122,11 +122,11 @@ public:
     // the progression of states is as follows:
     // INITIAL -> IN_ROUND -> ROUND_ENDED -> IN_ROUND -> ROUND_ENDED -> ...
     // IN_ROUND -> ROUND_ENDED -> IN_ROUND -> GAME_ENDED -> IN_ROUND -> ...
-    Model::GameState state() const;
+    StraightsModel::GameState state() const;
 
     // returns: the current error message
     // the error is not updated by any modifiers except setError and clearError
-    Model::Error error() const;
+    StraightsModel::Error error() const;
 
     // requires: round in progress
     // returns: the set of legal plays curr_player has
@@ -200,6 +200,6 @@ public:
     // visits curr_player with the passed player visitor
     void playCurrPlayer(const PlayerVisitor * pv);
 
-}; // Model
+}; // StraightsModel
 
 #endif

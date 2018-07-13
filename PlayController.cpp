@@ -5,7 +5,7 @@
 #include "ComputerPlayer.h"
 
 
-PlayController::PlayController(Model * model) : model_{model} {}
+PlayController::PlayController(StraightsModel * model) : model_{model} {}
 
 void PlayController::visitPlayer(const HumanPlayer & hp) const {
     // Wait for view to call model_->playCard()

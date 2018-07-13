@@ -4,13 +4,13 @@
 #include <string>
 #include <gtkmm.h>
 
-class View;
+class StraightsView;
 
 class Log : public Gtk::HBox {
-  View* parent_;
+  StraightsView* parent_;
   Gtk::Label log_label_;
 public:
-  Log(View* parent);
+  Log(StraightsView* parent);
   void set(std::string message);
 };
 

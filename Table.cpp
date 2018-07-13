@@ -2,7 +2,7 @@
 
 const int BORDER_LEN = 10;
 
-Table::Table(View* parent, int rows, int columns) : Gtk::Grid(), parent_{parent}, rows_{rows},
+Table::Table(StraightsView* parent, int rows, int columns) : Gtk::Grid(), parent_{parent}, rows_{rows},
 columns_{columns} {
   set_row_spacing(BORDER_LEN);
   set_column_homogeneous(true);
