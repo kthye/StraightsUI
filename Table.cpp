@@ -1,5 +1,4 @@
 #include "Table.h"
-#include "view.h"
 
 const int BORDER_LEN = 10;
 

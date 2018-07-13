@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <memory>
-#include "subject.h"
+#include "Subject.h"
 #include "SortedCardList.h"
 #include "Player.h"
 

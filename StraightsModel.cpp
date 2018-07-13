@@ -4,7 +4,7 @@
 
 #include <random>
 #include <algorithm>
-#include "model.h"
+#include "StraightsModel.h"
 #include "PlayController.h"
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"

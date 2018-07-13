@@ -5,19 +5,18 @@
 #include <gtkmm/grid.h>
 #include <vector>
 #include <memory>
-#include "observer.h"
+#include "Observer.h"
 #include "DeckGUI.h"
 #include "SortedCardList.h"
-#include "model.h"
 #include "MenuBar.h"
 #include "NewGameDialog.h"
 #include "Dashboard.h"
 #include "Table.h"
 #include "Hand.h"
 #include "Log.h"
+#include "StraightsModel.h"
 
 class Controller;
-class Model;
 
 
 class View : public Gtk::Window, public Observer {

@@ -1,5 +1,5 @@
 #include "Dashboard.h"
-#include "view.h"
+#include "StraightsView.h"
 
 const int BORDER_LEN = 10;
 const int PLAYER_COUNT = 4;

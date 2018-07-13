@@ -7,7 +7,7 @@
 #define STRAIGHTS_CONTROLLER_H
 
 #include <gtkmm.h>
-#include "model.h"
+#include "StraightsModel.h"
 #include "PlayController.h"
 
 class Card;

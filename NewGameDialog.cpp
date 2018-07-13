@@ -1,6 +1,6 @@
-#include "view.h"
+#include "StraightsView.h"
 #include "NewGameDialog.h"
-#include "model.h"
+#include "StraightsModel.h"
 
 const int BORDER_LEN = 10;
 const int PLAYER_COUNT = 4;

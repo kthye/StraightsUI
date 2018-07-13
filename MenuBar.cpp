@@ -1,6 +1,6 @@
 #include <string>
 #include "MenuBar.h"
-#include "view.h"
+#include "StraightsView.h"
 
 const int BORDER_LEN = 10;
 

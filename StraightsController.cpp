@@ -3,7 +3,7 @@
  */
 
 
-#include "controller.h"
+#include "StraightsController.h"
 #include "GameLogic.h"
 #include "CardList.h"
 

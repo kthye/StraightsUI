@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "model.h"
+#include "StraightsModel.h"
 
 ////////////////////////////////////////
 // Constructors

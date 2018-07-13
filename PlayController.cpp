@@ -1,6 +1,6 @@
 #include "PlayController.h"
 #include "GameLogic.h"
-#include "model.h"
+#include "StraightsModel.h"
 #include "CardList.h"
 #include "ComputerPlayer.h"
 
