@@ -1,15 +1,3 @@
-/*
- * MVC example of GTKmm program
- *
- * View class.  Is responsible for buttons (that user clicks) and for displaying
- * the top card of the deck.
- *
- *  Created by Jo Atlee on 06/07/09.
- *  Copyright 2009 UW. All rights reserved.
- *
- */
-
-
 #ifndef MVC_VIEW_H
 #define MVC_VIEW_H
 
@@ -33,6 +21,12 @@ class Model;
 
 
 class View : public Gtk::Window, public Observer {
+	// Spec fields
+	// menu bar - containing options to start or end the game
+	// table - the play area of the game with the cards already played
+	// dashboard - the current state of players with options
+	// hand - the active players hand
+	//
 private:
 	// View needs an instance of the controller for its buttons to invoke
 	Controller* controller_;
@@ -40,6 +34,7 @@ private:
 	// View also needs an instance of the concrete subject it is observing
 	Model *model_;
 
+	// View needs to instantiate the deck images
 	DeckGUI deck_;
 
 	// Widgets
@@ -58,7 +53,7 @@ private:
 	void setTableRow(const SortedCardList &playArea, Suit suit);
 
 public:
-	
+
 	void openNewGameDialog(unsigned int seed = 0);
 
 	void startNewGame(std::vector<Model::PlayerType> types, unsigned int seed);

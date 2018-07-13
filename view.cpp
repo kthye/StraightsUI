@@ -131,6 +131,7 @@ void View::update() {
 			}
 
 		roundOverDialog.run();
+		roundOverDialog.hide();
 		roundOverDialog.close();
 
 		setNewRound();

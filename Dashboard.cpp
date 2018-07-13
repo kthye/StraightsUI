@@ -24,7 +24,7 @@ hint_button_("Hint", 10), rage_button_("Rage", 10) {
     frame_boxes_.at(i)->add(*discards_labels_.at(i));
     frames_.at(i)->add(*frame_boxes_.at(i));
   }
-  frames_.push_back(std::unique_ptr<Gtk::Frame>(new Gtk::Frame("Menu")));
+  frames_.push_back(std::unique_ptr<Gtk::Frame>(new Gtk::Frame("Help")));
   frame_boxes_.push_back(std::unique_ptr<Gtk::VBox>(new Gtk::VBox(true, BORDER_LEN)));
   frame_boxes_.at(PLAYER_COUNT)->add(hint_button_);
   frame_boxes_.at(PLAYER_COUNT)->add(rage_button_);

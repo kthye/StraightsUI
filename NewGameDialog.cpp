@@ -64,4 +64,5 @@ void NewGameDialog::onCancelButtonClicked() {
 
 void NewGameDialog::setSeed(unsigned int seed) {
   seed_ = seed;
+  seed_label_.set_label("Seed: " + std::to_string(seed));
 }
