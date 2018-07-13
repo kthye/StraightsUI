@@ -20,7 +20,9 @@ public:
   Hand(View* parent, int handSize);
   void setCard(Glib::RefPtr<Gdk::Pixbuf> buffer, int cardIndex, bool glow = false);
   void setGlow(int cardIndex, bool glow);
-
+  
+  void disable();
+  void enable();
 };
 
 #endif

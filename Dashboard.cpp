@@ -9,9 +9,11 @@ hint_button_("Hint", 10), rage_button_("Rage", 10) {
 
   hint_button_.set_valign(Gtk::ALIGN_CENTER);
   hint_button_.set_border_width(BORDER_LEN);
+  hint_button_.set_sensitive(false);
   hint_button_.signal_clicked().connect(sigc::mem_fun(*this, &Dashboard::onHintButtonClicked));
   rage_button_.set_valign(Gtk::ALIGN_CENTER);
   rage_button_.set_border_width(BORDER_LEN);
+  rage_button_.set_sensitive(false);
   rage_button_.signal_clicked().connect(sigc::mem_fun(*this, &Dashboard::onRageButtonClicked));
 
   for (int i = 0; i < PLAYER_COUNT; ++i) {

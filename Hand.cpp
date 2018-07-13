@@ -16,6 +16,7 @@ hand_size_{handSize} {
     hand_images_.push_back(std::unique_ptr<Gtk::Image>(new Gtk::Image()));
     hand_buttons_.push_back(std::unique_ptr<Gtk::Button>(new Gtk::Button()));
     hand_buttons_.at(i)->set_name("");
+    hand_buttons_.at(i)->set_sensitive(false);
     hand_buttons_.at(i)->signal_clicked().connect(sigc::bind<unsigned int>(sigc::mem_fun(*this, &Hand::onCardClick), i));
     add(*hand_buttons_.at(i));
   }
@@ -35,6 +36,18 @@ void Hand::setGlow(int cardIndex, bool glow) {
     hand_buttons_.at(cardIndex)->set_name("");
 
   }
+}
+
+void Hand::disable() {
+    for (auto it = hand_buttons_.begin(); it != hand_buttons_.end(); ++it) {
+        (*it)->set_sensitive(false);
+    }
+}
+
+void Hand::enable() {
+    for (auto it = hand_buttons_.begin(); it != hand_buttons_.end(); ++it) {
+        (*it)->set_sensitive(true);
+    }
 }
 
 void Hand::onCardClick(unsigned int cardIndex) {

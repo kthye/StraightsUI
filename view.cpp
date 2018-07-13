@@ -91,6 +91,7 @@ void View::playCard(unsigned int cardIndex) {
 void View::update() {
 	if (model_->state() == Model::GAME_ENDED) {
 		dashboard_.disable();
+        hand_.disable();
 
 		std::string winnersText = "";
 		std::string results = "";
@@ -171,6 +172,7 @@ void View::update() {
 void View::startNewGame(std::vector<Model::PlayerType> types, unsigned int seed) {
 	menu_bar_.eraseSeedEntry();
 	dashboard_.enable();
+    hand_.enable();
 	setNewRound();
 	controller_->newGame(types, seed);
 }
