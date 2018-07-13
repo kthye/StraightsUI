@@ -25,18 +25,18 @@ public:
     // ensures: hand and discard are initialized empty
     // ensures: score is initialized to 0
     Player(size_t number);
+    Player(Player && other) = default;
+    virtual ~Player() = default;
 
     const CardList & hand() const;
     const CardList & discard() const;
     size_t score() const;
     size_t number() const;
-    bool isHandEmpty() const;
 
     void setHand(CardList && hand);
     void removeFromHand(const Card * c);
     void addToDiscard(const Card * c);
     void incrementScore(int score);
-    void resetScore();
     void clearDiscard();
 
     virtual void play(const PlayerVisitor * pv) = 0;

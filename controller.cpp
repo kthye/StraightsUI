@@ -11,13 +11,12 @@
 
 
 #include "controller.h"
-#include "model.h"
 #include "GameLogic.h"
+#include "CardList.h"
 
-Controller::Controller(Model *m) : play_controller_{m}, model_(m) {}
+Controller::Controller(Model * m) : model_{m}, play_controller_{m} {}
 
-
-void Controller::newGame(const std::vector<PlayerType> & types, int seed) {
+void Controller::newGame(const std::vector<Model::PlayerType> & types, int seed) {
     model_->newGame(types, seed);
 }
 
@@ -25,24 +24,31 @@ void Controller::newRound() {
     model_->newRound();
 }
 
-void Controller::playCard(const Card * c) {
+void Controller::play(const Card * c) {
     model_->clearError();
-    model_->playCard(c);
+
+    CardList legal_plays = model_->currLegalPlays();
+    if (legal_plays.contains(c)) {
+        model_->playCard(c);
+    } else if (!legal_plays.isEmpty()) {
+        model_->setError(Model::ILLEGAL_DISCARD);
+    } else {
+        model_->discardCard(c);
+    }
 }
 
-void Controller::ragequit(size_t number) {
-    model_->ragequit(number);
+void Controller::ragequit() {
+    model_->ragequit();
 }
 
-void Controller::update() {
-    if (model_->roundInProgress() && GameLogic::isRoundOver(model_->players())) {
-        model_->updateScores();
+void Controller::updateGame() {
+    if (model_->state() == Model::IN_ROUND) {
         if (GameLogic::isGameOver(model_->players())) {
             model_->endGame();
-        } else {
+        } else if (GameLogic::isRoundOver(model_->players())) {
             model_->endRound();
+        } else {
+            model_->playCurrPlayer(&play_controller_);
         }
-    } else if (model_->roundInProgress()) {
-        model_->play(&play_controller_);
     }
 }

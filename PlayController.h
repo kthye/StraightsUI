@@ -3,7 +3,6 @@
 
 #include "PlayerVisitor.h"
 
-class SortedCardList;
 class HumanPlayer;
 class ComputerPlayer;
 class Model;

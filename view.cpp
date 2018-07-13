@@ -62,7 +62,7 @@ hand(true, 0), logBox(true, 10), logLabel_("")  {
 
 	seedBox.add(seedLabel);
 
-	for (unsigned int i = 1; i <= model_->PLAYER_COUNT; ++i) {
+	for (unsigned int i = 1; i <= Model::PLAYER_COUNT; ++i) {
 		playerLabels.push_back(std::unique_ptr<Gtk::Label>(new Gtk::Label("Player " + std::to_string(i))));
 		labelBox.add(*playerLabels.at(i - 1));
 
@@ -151,12 +151,12 @@ void View::onEndGameButtonClicked() {
 }
 
 void View::onHintButtonClicked() {
-	if (model_->legalPlays().isEmpty()) {
+	if (model_->currLegalPlays().isEmpty()) {
 		logLabel_.set_text("You have no legal plays. Choose a card to discard.");
 	} else {
 		int count = 0;
 		for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
-			if (model_->legalPlays().contains(*it)) {
+			if (model_->currLegalPlays().contains(*it)) {
 				handButtons.at(count++)->set_name("LegalPlay");
 			} else {
 				handButtons.at(count++)->set_name("");
@@ -166,7 +166,7 @@ void View::onHintButtonClicked() {
 }
 
 void View::onRageButtonClicked() {
-	controller_->ragequit(model_->currPlayer()->number());
+	controller_->ragequit();
 }
 
 void View::onTogglePlayerClicked(int playerNumber) {
@@ -179,11 +179,11 @@ void View::onTogglePlayerClicked(int playerNumber) {
 
 void View::onStartNewGameButtonClicked() {
 	int seed = "" == seedEntry.get_text() ? 0 : std::stoi(seedEntry.get_text());
-	std::vector<PlayerType> types;
+	std::vector<Model::PlayerType> types;
 	for (auto it = playerToggleButtons.begin(); it != playerToggleButtons.end(); ++it) {
-			PlayerType type = HUMAN;
+			Model::PlayerType type = Model::HUMAN;
 			if ((*it)->get_label() == "Human") {
-				type = COMPUTER;
+				type = Model::COMPUTER;
 			}
 			types.push_back(type);
 	}
@@ -199,12 +199,12 @@ void View::onCancelButtonClicked() {
 
 void View::onCardClick(unsigned int cardIndex) {
 	if (cardIndex < model_->currPlayer()->hand().size()) {
-		controller_->playCard(model_->currPlayer()->hand().at(cardIndex));
+		controller_->play(model_->currPlayer()->hand().at(cardIndex));
 	}
 }
 
 void View::update() {
-	if (!model_->gameInProgress()) {
+	if (model_->state() == Model::IN_ROUND) {
 		std::string winnersText = "";
 		std::string results = "";
 
@@ -225,7 +225,7 @@ void View::update() {
 		gameOverDialog.set_secondary_text(results);
 		gameOverDialog.run();
 		gameOverDialog.close();
-	} else if (!model_->roundInProgress() && model_->gameInProgress()) {
+	} else if (model_->state() == Model::ROUND_ENDED) {
 
 		// Display round over dialog
 		Gtk::MessageDialog roundOverDialog("Round Over", true, Gtk::MESSAGE_QUESTION,
@@ -274,7 +274,7 @@ void View::update() {
 			logLabel_.set_label("You have a legal play. You may not discard.");
 		}
 	}
-	controller_->update();
+	controller_->updateGame();
 }
 
 void View::setNewGame() {

@@ -48,7 +48,7 @@ size_t GameLogic::calculateScore(const CardList& discard) {
 
 bool GameLogic::isRoundOver(const std::vector<std::unique_ptr<Player>> & players) {
     for (auto it = players.begin(); it != players.end(); ++it) {
-        if (!(*it)->isHandEmpty()) {
+        if (!(*it)->hand().isEmpty()) {
             return false;
         }
     }

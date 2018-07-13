@@ -8,13 +8,13 @@
 PlayController::PlayController(Model * model) : model_{model} {}
 
 void PlayController::visitPlayer(const HumanPlayer & hp) const {
-    // Wait for view to call mode_->playCard()
+    // Wait for view to call model_->playCard()
 }
 
 void PlayController::visitPlayer(const ComputerPlayer & cp) const {
     CardList plays = GameLogic::getLegalPlays(model_->playArea(), cp.hand());
     if (plays.isEmpty()) {
-        model_->playCard(*cp.hand().begin());
+        model_->discardCard(*cp.hand().begin());
     } else {
         model_->playCard(*plays.begin());
     }

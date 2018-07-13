@@ -10,27 +10,27 @@
  */
 
 
-#ifndef MVC_CONTROLLER_H
-#define MVC_CONTROLLER_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include <gtkmm.h>
-#include "Card.h"
-#include "Player.h"
-#include "observer.h"
 #include "model.h"
 #include "PlayController.h"
 
+class Card;
+
 class Controller {
+    Model *model_;
     PlayController play_controller_;
+
 public:
-   Controller( Model* );
-   void newGame(const std::vector<PlayerType> & types, int seed = 0);
+   Controller(Model * model);
+
+   void newGame(const std::vector<Model::PlayerType> & types, int seed = 0);
    void newRound();
-   void playCard(const Card * c);
-   void ragequit(size_t number);
-   void update();
-private:
-   Model *model_;
+   void play(const Card * c);
+   void ragequit();
+   void updateGame();
 }; // Controller
 
 

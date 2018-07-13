@@ -14,9 +14,16 @@
 class Card;
 class PlayController;
 
-enum PlayerType { HUMAN, COMPUTER };
-
 class Model : public Subject {
+public:
+    enum PlayerType { HUMAN, COMPUTER };
+    enum GameState { INITIAL, IN_ROUND, ROUND_ENDED, GAME_ENDED };
+    enum Error { ILLEGAL_DISCARD, NONE };
+
+private:
+    // The current seed used to shuffle the deck
+    int seed_;
+
     // The deck owns all card objects passed around during the game
     std::vector<std::unique_ptr<const Card>> deck_;
 
@@ -29,25 +36,21 @@ class Model : public Subject {
     // Stores the cards that have been played
     SortedCardList play_area_;
 
+    // Stores the winners of the most recent game
+    // If a game is in progress, winners_ is empty
     std::vector<std::vector<const Player *>> winners_;
 
-    // The current seed used to shuffle the deck
-    int seed_;
-
-    // Whether a game is currently in progress
-    bool game_in_progress_;
-
-    // Whether a round is currently in progress
-    bool round_in_progress_;
+    // The current state of the game
+    Model::GameState state_;
 
     // The current error, if it exists
-    bool error_;
+    Model::Error error_;
 
     // Initializes the internal deck representation
     void initDeck();
 
-    // Initializes PLAYER_COUNT player objects
-    void initPlayers(const std::vector<PlayerType> & types);
+    // Clears players_ and creates PLAYER_COUNT new players with types
+    void resetPlayers(const std::vector<PlayerType> & types);
 
     // Shuffles the internal deck representation
     void shuffleDeck();
@@ -58,14 +61,11 @@ class Model : public Subject {
     // Advances curr_player_ to the next player
     void advancePlayer();
 
-    // Calculates player scores and updates
-    void calculatePlayerScores();
+    // Adds the scores of the players' discards to the players' scores
+    void updateScores();
 
-    void setWinners();
-
-    void clearScores();
-
-    void clearWinners();
+    // Populates winners_ using current player scores
+    void populateWinners();
 
 public:
     // The number of cards in the deck
@@ -77,31 +77,28 @@ public:
     // The number of cards in each player's hand
     static const size_t HAND_SIZE;
 
-    // The error message shown if the player tries to discard with a legal play
-    static const std::string ERR_HAS_LEGAL_PLAY;
-
     Model();
 
     const std::vector<std::unique_ptr<Player>> & players() const;
     const Player * currPlayer() const;
     const SortedCardList & playArea() const;
-    bool gameInProgress() const;
-    bool roundInProgress() const;
-    bool error() const;
-
     const std::vector<std::vector<const Player *>> & winners() const;
-    CardList legalPlays();
+    Model::GameState state() const;
+    Model::Error error() const;
+
+    CardList currLegalPlays() const;
 
     void newGame(const std::vector<PlayerType> & types, int seed = 0);
-    void endGame();
     void newRound();
     void endRound();
-    // Update player scores from their current discards
-    void updateScores();
+    void endGame();
     void playCard(const Card * c);
+    void discardCard(const Card * c);
+    void setError(Error error);
     void clearError();
-    void play(const PlayerVisitor * pv);
-    void ragequit(size_t number);
+    void ragequit();
+
+    void playCurrPlayer(const PlayerVisitor * pv);
 
 }; // Model
 

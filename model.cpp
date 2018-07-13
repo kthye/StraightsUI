@@ -5,23 +5,27 @@
 #include <random>
 #include <algorithm>
 #include "model.h"
-#include "Card.h"
-#include "GameLogic.h"
 #include "PlayController.h"
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
-
-#include <iostream>
-using namespace std;
+#include "GameLogic.h"
 
 const size_t Model::CARD_COUNT = 52;
 const size_t Model::PLAYER_COUNT = 4;
 const size_t Model::HAND_SIZE = Model::CARD_COUNT / Model::PLAYER_COUNT;
 
+////////////////////////////////////////
+// Constructors
+////////////////////////////////////////
+
 Model::Model()
-: seed_{0}, game_in_progress_{false}, round_in_progress_{false} {
+: seed_{0}, state_{INITIAL}, error_{NONE} {
     initDeck();
 }
+
+////////////////////////////////////////
+// Getters
+////////////////////////////////////////
 
 const std::vector<std::unique_ptr<Player>> & Model::players() const {
     return players_;
@@ -35,39 +39,35 @@ const SortedCardList & Model::playArea() const {
     return play_area_;
 }
 
-bool Model::gameInProgress() const {
-    return game_in_progress_;
-}
-
-bool Model::roundInProgress() const {
-    return round_in_progress_;
-}
-
-bool Model::error() const {
-    return error_;
-}
-
 const std::vector<std::vector<const Player *>> & Model::winners() const {
     return winners_;
 }
 
-CardList Model::legalPlays() {
-    return GameLogic::getLegalPlays(play_area_, (*curr_player_)->hand());
+Model::GameState Model::state() const {
+    return state_;
 }
+
+Model::Error Model::error() const {
+    return error_;
+}
+
+////////////////////////////////////////
+// Computed properties
+////////////////////////////////////////
+
+CardList Model::currLegalPlays() const {
+    return GameLogic::getLegalPlays(playArea(), currPlayer()->hand());
+}
+
+////////////////////////////////////////
+// Public modifiers
+////////////////////////////////////////
 
 void Model::newGame(const std::vector<PlayerType> & types, int seed) {
-    players_.clear();
-    winners_.clear();
-    initPlayers(types);
+    resetPlayers(types);
     seed_ = seed;
-    game_in_progress_ = true;
+    winners_.clear();
     newRound();
-}
-
-void Model::endGame() {
-    setWinners();
-    game_in_progress_ = false;
-    endRound();
 }
 
 void Model::newRound() {
@@ -77,42 +77,62 @@ void Model::newRound() {
     }
     shuffleDeck();
     dealHands();
-    round_in_progress_ = true;
+    state_ = IN_ROUND;
     notify();
 }
 
 void Model::endRound() {
-    round_in_progress_ = false;
+    updateScores();
+    state_ = ROUND_ENDED;
+    notify();
+}
+
+void Model::endGame() {
+    updateScores();
+    populateWinners();
+    state_ = GAME_ENDED;
     notify();
 }
 
 // Require that c points to element in deck
 void Model::playCard(const Card * c) {
-    CardList legal_plays = GameLogic::getLegalPlays(play_area_, (*curr_player_)->hand());
-    if (legal_plays.contains(c)) {
-        (*curr_player_)->removeFromHand(c);
-        play_area_.addCard(c);
-        cout << "Player " << (*curr_player_)->number() << " plays " << *c << endl;
-        advancePlayer();
-    } else if (!legal_plays.isEmpty()) {
-        error_ = true;
-    } else {
-        (*curr_player_)->removeFromHand(c);
-        (*curr_player_)->addToDiscard(c);
-        cout << "Player " << (*curr_player_)->number() << " discards " << *c << endl;
-        advancePlayer();
-    }
+    (*curr_player_)->removeFromHand(c);
+    play_area_.addCard(c);
+    advancePlayer();
     notify();
 }
 
-void Model::play(const PlayerVisitor * pv) {
-    (*curr_player_)->play(pv);
+// Require that c points to element in deck
+void Model::discardCard(const Card * c) {
+    (*curr_player_)->removeFromHand(c);
+    (*curr_player_)->addToDiscard(c);
+    advancePlayer();
+    notify();
+}
+
+void Model::setError(Error error) {
+    error_ = error;
+    notify();
 }
 
 void Model::clearError() {
-    error_ = false;
+    error_ = NONE;
     notify();
 }
+
+void Model::ragequit() {
+    *curr_player_ = std::unique_ptr<Player>(new ComputerPlayer(std::move(**curr_player_)));
+    notify();
+}
+
+// Note: this one does not notify since it might not change the state
+void Model::playCurrPlayer(const PlayerVisitor * pv) {
+    (*curr_player_)->play(pv);
+}
+
+////////////////////////////////////////
+// Private helpers
+////////////////////////////////////////
 
 void Model::initDeck() {
     for (int s = CLUB; s != SUIT_COUNT; ++s) {
@@ -124,7 +144,8 @@ void Model::initDeck() {
     }
 }
 
-void Model::initPlayers(const std::vector<PlayerType> & types) {
+void Model::resetPlayers(const std::vector<PlayerType> & types) {
+    players_.clear();
     for (size_t i = 0; i < PLAYER_COUNT; ++i) {
         if (types.at(i) == HUMAN) {
             players_.push_back(std::unique_ptr<Player>(new HumanPlayer(i+1)));
@@ -168,14 +189,13 @@ void Model::advancePlayer() {
 }
 
 void Model::updateScores() {
-    cout << "updatescores called" << endl;
     for (auto it = players_.begin(); it != players_.end(); ++it) {
         size_t score_gained = GameLogic::calculateScore((*it)->discard());
         (*it)->incrementScore(score_gained);
     }
 }
 
-struct winners_ascending
+struct scores_ascending
 {
     inline bool operator() (const std::vector<const Player *> & v1, const std::vector<const Player *> & v2)
     {
@@ -184,7 +204,7 @@ struct winners_ascending
 };
 
 // requires: winners should have been cleared
-void Model::setWinners() {
+void Model::populateWinners() {
     // put players into score buckets
     for (auto pit = players_.begin(); pit != players_.end(); ++pit) {
         std::vector<std::vector<const Player *>>::iterator bit;
@@ -200,20 +220,5 @@ void Model::setWinners() {
     }
 
     // sort by score
-    std::sort(winners_.begin(), winners_.end(), winners_ascending());
-}
-
-void Model::clearScores() {
-    for (auto it = players_.begin(); it != players_.end(); ++it) {
-        (*it)->resetScore();
-    }
-}
-
-void Model::clearWinners() {
-    winners_.clear();
-}
-
-void Model::ragequit(size_t number) {
-    players_.at(number - 1) = std::unique_ptr<Player>(new ComputerPlayer(std::move(*players_.at(number - 1))));
-    notify();
+    std::sort(winners_.begin(), winners_.end(), scores_ascending());
 }

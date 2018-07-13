@@ -1,8 +1,16 @@
 #include "Player.h"
 #include "model.h"
 
+////////////////////////////////////////
+// Constructors
+////////////////////////////////////////
+
 Player::Player(size_t number)
-    : score_{0}, number_{number} {}
+: score_{0}, number_{number} {}
+
+////////////////////////////////////////
+// Getters
+////////////////////////////////////////
 
 const CardList & Player::hand() const {
     return hand_;
@@ -20,9 +28,9 @@ size_t Player::number() const {
     return number_;
 }
 
-bool Player::isHandEmpty() const {
-    return hand_.isEmpty();
-}
+////////////////////////////////////////
+// Modifiers
+////////////////////////////////////////
 
 void Player::setHand(CardList && hand) {
     hand_ = std::move(hand);
@@ -38,10 +46,6 @@ void Player::addToDiscard(const Card * c) {
 
 void Player::incrementScore(int score) {
   score_ += score;
-}
-
-void Player::resetScore() {
-    score_ = 0;
 }
 
 void Player::clearDiscard() {
