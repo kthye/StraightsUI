@@ -6,7 +6,8 @@ const int BORDER_LEN = 10;
 const int PLAYER_COUNT = 4;
 
 NewGameDialog::NewGameDialog(StraightsView* parent) : Gtk::Dialog(), parent_{parent}, seed_box_(true, BORDER_LEN), label_box_(true, BORDER_LEN),
-player_box_(true, BORDER_LEN), button_box_(true, BORDER_LEN), seed_label_("Seed: 0"), cancel_button_("Cancel"), new_game_button_("Start New Game"), seed_(0) {
+player_box_(true, BORDER_LEN), button_box_(true, BORDER_LEN), seed_label_("Seed: 0"), cancel_button_("Cancel"), new_game_button_("Start New Game"),
+seed_(0) {
 
   set_transient_for(*parent);
 	Gtk::Box* dialog_ = get_content_area();

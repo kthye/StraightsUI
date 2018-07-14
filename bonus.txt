@@ -1,0 +1,1 @@
+Implemented a legal play indicator through a hint button. If there is a legal play, the hint button will highlight the cards that can be played. If the player must discard, then clicking the hint button will create a prompt on the bottom right corner of the screen to tell the user they have no legal plays and should choose a card to discard.

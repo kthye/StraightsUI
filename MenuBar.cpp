@@ -17,9 +17,9 @@ seed_entry_(), end_game_button_("End Game") {
 
 void MenuBar::onNewGameButtonClicked() {
 	if (seed_entry_.get_text() == "") {
-		parent_->openNewGameDialog(0);
+		parent_->openNewGameDialog(false);
 	} else {
-		parent_->openNewGameDialog(std::stoi(seed_entry_.get_text()));
+		parent_->openNewGameDialog(true, std::stoi(seed_entry_.get_text()));
 	}
 }
 

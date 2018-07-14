@@ -51,12 +51,12 @@ void Dashboard::onRageButtonClicked() {
   parent_->rageQuit();
 }
 
-void Dashboard::setScore(int playerNumber, std::string score) {
-    score_labels_.at(playerNumber - 1)->set_text(score);
+void Dashboard::setScore(int playerNumber, int score) {
+    score_labels_.at(playerNumber - 1)->set_text("Score: " + std::to_string(score));
 }
 
-void Dashboard::setDiscards(int playerNumber, std::string discards) {
-    discards_labels_.at(playerNumber - 1)->set_text(discards);
+void Dashboard::setDiscards(int playerNumber, int discards) {
+    discards_labels_.at(playerNumber - 1)->set_text("Discards: " + std::to_string(discards));
 }
 
 void Dashboard::disable() {
@@ -67,4 +67,11 @@ void Dashboard::disable() {
 void Dashboard::enable() {
   hint_button_.set_sensitive(true);
   rage_button_.set_sensitive(true);
+}
+
+void Dashboard::clear() {
+  for (int i = 1; i <= PLAYER_COUNT; ++i) {
+    setScore(i, 0);
+    setDiscards(i, 0);
+  }
 }

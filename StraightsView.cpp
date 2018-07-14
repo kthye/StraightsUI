@@ -12,9 +12,11 @@ const int BORDER_LEN = 10;
 const int TABLE_ROWS = 4;
 const int TABLE_COLUMNS = 13;
 const std::string ERR_HAS_LEGAL_PLAY = "You have a legal play. You may not discard.";
+const std::string HINT_MUST_DISCARD = "You have no legal play. You must discard.";
 
-StraightsView::StraightsView(StraightsController *c, StraightsModel *m) : controller_(c), model_(m), deck_(), panels_(false, BORDER_LEN), menu_bar_(this),
-new_game_dialog_(this), table_(this, TABLE_ROWS, TABLE_COLUMNS), dashboard_(this),
+
+StraightsView::StraightsView(StraightsController *c, StraightsModel *m) : controller_(c), model_(m), deck_(), panels_(false, BORDER_LEN),
+menu_bar_(this), new_game_dialog_(this), table_(this, TABLE_ROWS, TABLE_COLUMNS), dashboard_(this),
 hand_(this, TABLE_COLUMNS), log_(this)  {
 
 	// Sets some properties of the window.
@@ -52,10 +54,10 @@ hand_(this, TABLE_COLUMNS), log_(this)  {
 	openNewGameDialog();
 }
 
-StraightsView::~StraightsView() {}
-
-void StraightsView::openNewGameDialog(unsigned int seed) {
-	new_game_dialog_.setSeed(seed);
+void StraightsView::openNewGameDialog(bool changeSeed, unsigned int seed) {
+	if (changeSeed) {
+		new_game_dialog_.setSeed(seed);
+	}
 	new_game_dialog_.show_all();
 	new_game_dialog_.set_keep_above(true);
 	new_game_dialog_.present();
@@ -63,7 +65,7 @@ void StraightsView::openNewGameDialog(unsigned int seed) {
 
 void StraightsView::showHint() {
 	if (model_->currLegalPlays().isEmpty()) {
-		log_.set(ERR_HAS_LEGAL_PLAY);
+		log_.set(HINT_MUST_DISCARD);
 	} else {
 		int count = 0;
 		for (auto it = model_->currPlayer()->hand().begin(); it != model_->currPlayer()->hand().end(); ++it) {
@@ -89,8 +91,15 @@ void StraightsView::playCard(unsigned int cardIndex) {
 void StraightsView::update() {
 	if (model_->state() == StraightsModel::GAME_ENDED) {
 		dashboard_.disable();
-        hand_.disable();
+    hand_.disable();
 
+		// Update dashboard
+		for (unsigned int i = 0; i < model_->PLAYER_COUNT; ++i) {
+			dashboard_.setScore(i + 1, model_->players().at(i)->score());
+			dashboard_.setDiscards(i + 1, model_->players().at(i)->discard().size());
+		}
+
+		// Generate game over dialog
 		std::string winnersText = "";
 		std::string results = "";
 
@@ -125,8 +134,8 @@ void StraightsView::update() {
 
 			// Update dashboard
 			for (unsigned int i = 0; i < model_->PLAYER_COUNT; ++i) {
-				dashboard_.setScore(i + 1, "Score: " + std::to_string(model_->players().at(i)->score()));
-				dashboard_.setDiscards(i + 1, "Discards: " + std::to_string(model_->players().at(i)->discard().size()));
+				dashboard_.setScore(i + 1, model_->players().at(i)->score());
+				dashboard_.setDiscards(i + 1, model_->players().at(i)->discard().size());
 			}
 
 		roundOverDialog.run();
@@ -144,7 +153,7 @@ void StraightsView::update() {
 
 			// Update dashboard
 			for (unsigned int i = 0; i < model_->PLAYER_COUNT; ++i) {
-				dashboard_.setDiscards(i + 1, "Discards: " + std::to_string(model_->players().at(i)->discard().size()));
+				dashboard_.setDiscards(i + 1, model_->players().at(i)->discard().size());
 			}
 
 			// Update hands
@@ -160,7 +169,6 @@ void StraightsView::update() {
 			log_.set("Player " + std::to_string(model_->currPlayer()->number()) + "'s turn.");
 
 		} else {
-			std::cerr << ERR_HAS_LEGAL_PLAY << std::endl;
 			log_.set(ERR_HAS_LEGAL_PLAY);
 		}
 	}
@@ -169,8 +177,9 @@ void StraightsView::update() {
 
 void StraightsView::startNewGame(std::vector<StraightsModel::PlayerType> types, unsigned int seed) {
 	menu_bar_.eraseSeedEntry();
+	dashboard_.clear();
 	dashboard_.enable();
-    hand_.enable();
+  hand_.enable();
 	setNewRound();
 	controller_->newGame(types, seed);
 }
